@@ -2459,4 +2459,30 @@ sdkApp.controller('sdkApp', function($scope, $http) {
 	};
 });
 
+adqualityApp.controller('adqualityCtrl', function($scope, $http) {
+
+	$scope.showData = false;
+	$http({
+		method : "GET",
+		url : "adQualityController"
+	}).then(function mySuccess(response) {
+		$scope.data = response.data;
+		$scope.showData = true;
+	}, function myError(response) {
+		$scope.sites = response.statusText;
+	});
+	
+	$scope.order = function(predicate) {
+		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
+				: false;
+		$scope.predicate = predicate;
+	};
+});
+
+adqualityApp.filter('percentage', [ '$filter', function($filter) {
+	return function(input, decimals) {
+		return $filter('number')(input * 100, decimals) + '%';
+	};
+} ]);
+
 
