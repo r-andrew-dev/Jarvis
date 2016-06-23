@@ -68,6 +68,10 @@
     <servlet-name>viewabilityController</servlet-name>
     <servlet-class>controller.ViewabilityController</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>adQualityController</servlet-name>
+    <servlet-class>controller.AdQualityController</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>javaAngularJS</servlet-name>
     <url-pattern>/javaAngularJS</url-pattern>
@@ -127,5 +131,9 @@
   <servlet-mapping>
     <servlet-name>viewabilityController</servlet-name>
     <url-pattern>/viewabilityController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>adQualityController</servlet-name>
+    <url-pattern>/adQualityController</url-pattern>
   </servlet-mapping>
 </web-app>
