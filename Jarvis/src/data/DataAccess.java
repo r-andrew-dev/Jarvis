@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import model.Account;
+import model.AdQuality;
 import model.Daily;
 import model.Exchange;
 import model.GenericObject;
@@ -2715,6 +2716,73 @@ public class DataAccess {
 		}
 
 		return sitesList;
+
+	}
+	
+	public List<AdQuality> getAdQualityData() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<AdQuality> biddersList = new ArrayList<AdQuality>();
+		String query = "select v.name, v.count, u.count "
+						+"from "
+						+"(select c.name, count(cv.status) count "
+						+"from core.company c, core.creative_verification cv "
+						+"where c.type = 'BUYER' "
+						+"and cv.buyer_pid = c.pid "
+						+"and cv.status = 1 "
+						+"group by 1) v, "
+						+"(select c.name, count(cv.status) count "
+						+"from core.company c, core.creative_verification cv "
+						+"where c.type = 'BUYER' "
+						+"and cv.buyer_pid = c.pid "
+						+"and cv.status = 2 "
+						+"group by 1) u "
+						+"where v.name = u.name";
+
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				AdQuality aq = new AdQuality();
+				aq.setBidder(rs.getString(1));
+				aq.setVerified(rs.getInt(2));
+				aq.setUnverified(rs.getInt(3));
+				biddersList.add(aq);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return biddersList;
 
 	}
 	
