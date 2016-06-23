@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="styles.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src="scripts.js"/></script>
+<script src="myApp.js"/></script>
+<script src="myCtrl.js"/></script>
+<title>Insert title here</title>
+</head>
+<body>
+<div ng-app="testApp">
+<div id="div1" ng-controller="ProductController">
+<a href="#" ng-click="callToAddToProductList('account')">Link</a>
+</div>
+<div id="div2" ng-controller="CartController">
+{{ products }}
+</div>
+</div>
+<!-- <script>
+angular.bootstrap(document.getElementById("div1"),['testApp']);
+angular.bootstrap(document.getElementById("div2"),['testApp']);
+</script> -->
+</body>
+</html>
