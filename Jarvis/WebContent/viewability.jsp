@@ -50,7 +50,7 @@
 
 			});
 </script>
-<title>Ad Quality Reports</title>
+<title>Viewability Report</title>
 </head>
 <body>
 	<div id="header"></div>
