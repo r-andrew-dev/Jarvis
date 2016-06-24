@@ -23,8 +23,9 @@ public class ViewabilityController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String path = request.getParameter("path").toString();
 		DataAccess d = new DataAccess();
-		List<Viewability> tags = d.getViewabilityData();
+		List<Viewability> tags = d.getViewabilityData(path);
 		String json = new Gson().toJson(tags);
 		response.setContentType("application/json");
 		response.getWriter().write(json);
