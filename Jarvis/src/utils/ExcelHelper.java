@@ -26,7 +26,7 @@ public class ExcelHelper {
 		if (path.equals("local"))
 			this.path = "/users/kbasu/Desktop/";
 		else if (path.equals("mac"))
-			this.path = "/users/kbasu15/Desktop/Jarvis_Data";
+			this.path = "/users/kbasu15/Desktop/Jarvis_Data/";
 		else
 			this.path = "/home/kbasu/report/";
 	}
