@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 
 import data.DataAccess;
 import model.AdQuality;
+import model.Daily;
 
 public class AdQualityController extends HttpServlet {
 
@@ -23,8 +24,24 @@ public class AdQualityController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String type = request.getParameter("type");
+		if(type.equals("bidders"))
+			getBiddersData(request, response);
+		else if(type.equals("daily"))
+			getDailyData(request, response);
+	}
+	
+	private void getBiddersData(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		DataAccess d = new DataAccess();
 		List<AdQuality> tags = d.getAdQualityData();
+		String json = new Gson().toJson(tags);
+		response.setContentType("application/json");
+		response.getWriter().write(json);
+	}
+	
+	private void getDailyData(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		DataAccess d = new DataAccess();
+		List<Daily> tags = d.getAdQualityDailyData();
 		String json = new Gson().toJson(tags);
 		response.setContentType("application/json");
 		response.getWriter().write(json);

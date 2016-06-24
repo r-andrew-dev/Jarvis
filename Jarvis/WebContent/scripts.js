@@ -18,9 +18,13 @@ function openWindow(id) {
 	if(id == 'tierOpt')
 		window.location.href = "tierOpt.jsp";
 	if(id == 'viewability')
-		window.location.href = "viewability.jsp";
+		window.location.href = "adQualityHome.jsp";
 	if(id == 'taco')
 		window.location.href = "tacocorp.jsp";
+	if(id == 'viewabilityreport')
+		window.location.href = "viewability.jsp";
+	if(id == 'adqualityreport')
+		window.location.href = "adquality.jsp";
 }
 
 function drawColumnChart(categories, data, yAxisText, title) {
@@ -261,7 +265,7 @@ function drawLineChart(categories, data, yAxisText, title) {
 	return obj;
 }
 
-function drawLineChartWide(categories, data, yAxisText, title) {
+function drawLineChartWide(categories, data, yAxisText, title, tickInterval) {
 	var obj = {
 			options: {
 	            chart: {
@@ -279,7 +283,7 @@ function drawLineChartWide(categories, data, yAxisText, title) {
 	            },
 	            xAxis: {
 	            	categories: categories,
-	            	tickInterval: 48
+	            	tickInterval: tickInterval
 	            },
 	            yAxis: {
 	                min: 0,

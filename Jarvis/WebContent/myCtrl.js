@@ -989,13 +989,13 @@ tagAuctionsApp
 																	categories,
 																	requestsData,
 																	'Values',
-																	'Requests vs Auctions vs Ads Served');
+																	'Requests vs Auctions vs Ads Served', 48);
 
 															$scope.revChart = drawLineChartWide(
 																	categories,
 																	costsData,
 																	'$',
-																	'Net Revenue vs Costs');
+																	'Net Revenue vs Costs', 48);
 
 															var countryReqs = response.data.countryReqs;
 															var carrierReqs = response.data.carrierReqs;
@@ -2469,12 +2469,62 @@ sdkApp.controller('sdkApp', function($scope, $http) {
 adqualityApp.controller('adqualityCtrl', function($scope, $http) {
 
 	$scope.showData = false;
+	
 	$http({
 		method : "GET",
-		url : "adQualityController"
+		url : "adQualityController?type=bidders"
 	}).then(function mySuccess(response) {
 		$scope.data = response.data;
 		$scope.showData = true;
+	}, function myError(response) {
+		$scope.sites = response.statusText;
+	});
+	
+	$http({
+		method : "GET",
+		url : "adQualityController?type=daily"
+	}).then(function mySuccess(response) {
+		var trends = response.data;
+		
+		var categories = [];
+		var data = [];
+
+		var verifiedDataObject = {};
+		var unverifiedDataObject = {};
+
+		verifiedDataObject['name'] = 'Verified';
+		unverifiedDataObject['name'] = 'Unverifiable';
+
+		var verifiedValues = [];
+		var unverifiedValues = [];
+		
+		for (var i = 0; i < Object
+				.keys(trends).length; i++) {
+			categories
+					.push(trends[i].date);
+			verifiedValues
+					.push(trends[i].verified);
+			unverifiedValues
+					.push(trends[i].unverified);
+			
+		}
+
+		verifiedDataObject['data'] = verifiedValues;
+		unverifiedDataObject['data'] = unverifiedValues;
+
+
+		data.push(verifiedDataObject);
+		data.push(unverifiedDataObject);
+
+
+		$scope.theoremChart = drawLineChartWide(
+				categories,
+				data,
+				'Values',
+				'Daily Verified vs Unverifiable', 1);
+		
+		
+		
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});

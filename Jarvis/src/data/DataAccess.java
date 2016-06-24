@@ -2786,6 +2786,71 @@ public class DataAccess {
 
 	}
 	
+	public List<Daily> getAdQualityDailyData() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<Daily> dailyData = new ArrayList<Daily>();
+		String query = "select v.date, v.count, u.count "
+						+"from "
+						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"from core.creative_verification cv "
+						+"where date(cv.last_update) >= date_sub(curdate(), interval 30 day) "
+						+"and cv.status = 1 "
+						+"group by 1) v, "
+						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"from core.creative_verification cv "
+						+"where date(cv.last_update) >= date_sub(curdate(), interval 30 day) "
+						+"and cv.status = 2 "
+						+"group by 1) u "
+						+"where v.date = u.date";
+
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				Daily d = new Daily();
+				d.setDate(rs.getString(1));
+				d.setVerified(rs.getInt(2));
+				d.setUnverified(rs.getInt(3));
+				dailyData.add(d);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return dailyData;
+
+	}
+	
 	public List<Viewability> getViewabilityData(String path) throws IOException {
 
 		Connection conn = null;

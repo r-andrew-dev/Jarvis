@@ -9,6 +9,24 @@ public class Daily {
 	private int requests = 0;
 	private int auctions = 0;
 	private float costs = 0;
+	private int verified;
+	private int unverified;
+
+	public int getVerified() {
+		return verified;
+	}
+
+	public void setVerified(int verified) {
+		this.verified = verified;
+	}
+
+	public int getUnverified() {
+		return unverified;
+	}
+
+	public void setUnverified(int unverified) {
+		this.unverified = unverified;
+	}
 
 	public int getAuctions() {
 		return auctions;
