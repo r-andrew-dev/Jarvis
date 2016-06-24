@@ -2786,14 +2786,14 @@ public class DataAccess {
 
 	}
 	
-	public List<Viewability> getViewabilityData() throws IOException {
+	public List<Viewability> getViewabilityData(String path) throws IOException {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Viewability> sitesList = new ArrayList<Viewability>();
 		String query = "select * from Jarvis.Exchange_Viewability";
-		ExcelHelper eh = new ExcelHelper("local");
+		ExcelHelper eh = new ExcelHelper(path);
 		Map<String, String> ams = eh.readPubAMs();
 
 		try {
