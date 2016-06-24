@@ -2387,13 +2387,20 @@ tierOptApp.controller('tierOptCtrl', function($scope, $http) {
 	};
 });
 
-viewabilityApp.controller('viewabilityCtrl', function($scope, $http) {
+viewabilityApp.controller('viewabilityCtrl', function($scope, $http, $location) {
 
 	$scope.showData = false;
+	
+	if ($location.absUrl().indexOf('localhost') > -1)
+		path = 'local';
+	else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+		path = 'mac';
+	else
+		path = 'remote';
 
 	$http({
 		method : "GET",
-		url : "viewabilityController"
+		url : "viewabilityController?path="+path
 	}).then(function mySuccess(response) {
 		$scope.data = response.data;
 		$scope.showData = true;
