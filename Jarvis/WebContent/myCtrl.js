@@ -2445,25 +2445,166 @@ viewabilityApp.filter('percentage', [ '$filter', function($filter) {
 	};
 } ]);
 
-sdkApp.controller('sdkApp', function($scope, $http) {
+sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 
 	$scope.showData = false;
+	
+	if ($location.absUrl().indexOf('localhost') > -1)
+		path = 'local';
+	else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+		path = 'mac';
+	else
+		path = 'remote';
 
 	$http({
 		method : "GET",
-		url : ""
+		url : "sdkController?path="+path
 	}).then(function mySuccess(response) {
-		$scope.data = response.data;
+		var data = response.data;
+		
+		var categories = [];
+		var trendsData = [];
+
+		var ios6DataObject = {};
+		var android6DataObject = {};
+		var ios5DataObject = {};
+		var android5DataObject = {};
+		var below4_6DataObject = {};
+		var jsDataObject = {};
+		var win_s2sDataObject = {};
+
+		ios6DataObject['name'] = 'iOS 6.0';
+		android6DataObject['name'] = 'Android 6.0';
+		ios5DataObject['name'] = 'iOS 5.0';
+		android5DataObject['name'] = 'Android 5.0';
+		below4_6DataObject['name'] = '4.6 and below';
+		jsDataObject['name'] = 'JS Tag';
+		win_s2sDataObject['name'] = 'Windows and S2S';
+
+		var ios6Values = [];
+		var android6Values = [];
+		var ios5Values = [];
+		var android5Values = [];
+		var below4_6Values = [];
+		var jsValues = [];
+		var win_s2sValues = [];
+
+		for (var i = 0; i < Object
+				.keys(data).length; i++) {
+			categories
+					.push(data[i].month);
+			ios6Values
+					.push(data[i].ios6);
+			android6Values
+					.push(data[i].android6);
+			ios5Values
+					.push(data[i].ios5);
+			android5Values
+					.push(data[i].android5);
+			below4_6Values
+					.push(data[i].below4_6);
+			jsValues
+					.push(data[i].js);
+			win_s2sValues
+					.push(data[i].win_s2s);
+
+		}
+		ios6DataObject['data'] = ios6Values;
+		android6DataObject['data'] = android6Values;
+		ios5DataObject['data'] = ios5Values;
+		android5DataObject['data'] = android5Values;
+		below4_6DataObject['data'] = below4_6Values;
+		jsDataObject['data'] = jsValues;
+		win_s2sDataObject['data'] = win_s2sValues;
+
+		trendsData
+				.push(ios6DataObject);
+		trendsData
+				.push(android6DataObject);
+		trendsData
+				.push(ios5DataObject);
+		trendsData
+				.push(android5DataObject);
+		trendsData
+				.push(below4_6DataObject);
+		trendsData
+				.push(jsDataObject);
+		trendsData
+				.push(win_s2sDataObject);
+
+		$scope.sdkChart = drawStackedColumnChartWide(
+				categories, trendsData,
+				'Adoption Rate',
+				'SDK Adoption');
 		$scope.showData = true;
+		
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
-	
-	$scope.order = function(predicate) {
-		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
-				: false;
-		$scope.predicate = predicate;
-	};
+
+});
+
+
+sdkApp.controller('nativeCtrl', function($scope, $http) {
+
+	$scope.showNativeData = false;
+
+	$http({
+		method : "GET",
+		url : "nativeController"
+	}).then(function mySuccess(response) {
+		var trends = response.data;
+		
+		var categories = [];
+		var data = [];
+		var revdata = [];
+
+		var requestsDataObject = {};
+		var revenueDataObject = {};
+
+		requestsDataObject['name'] = 'Inbound Requests';
+		revenueDataObject['name'] = 'Revenue';
+
+		var requestsValues = [];
+		var revenueValues = [];
+		
+		for (var i = 0; i < Object
+				.keys(trends).length; i++) {
+			categories
+					.push(trends[i].date);
+			requestsValues
+					.push(trends[i].requests);
+			revenueValues
+					.push(trends[i].spend);
+			
+		}
+
+		requestsDataObject['data'] = requestsValues;
+		revenueDataObject['data'] = revenueValues;
+
+
+		data.push(requestsDataObject);
+		revdata.push(revenueDataObject);
+
+
+		$scope.nativeReqsChart = drawLineChartWide(
+				categories,
+				data,
+				'Requests',
+				'Daily Inbound Requests', 1);
+		
+		$scope.nativeRevChart = drawLineChartWide(
+				categories,
+				revdata,
+				'Revenue ($)',
+				'Daily Revenue', 0);
+		
+		$scope.showNativeData = true;
+		
+	}, function myError(response) {
+		$scope.sites = response.statusText;
+	});
+
 });
 
 adqualityApp.controller('adqualityCtrl', function($scope, $http) {
