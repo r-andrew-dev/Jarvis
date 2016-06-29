@@ -17,6 +17,7 @@ import data.DataAccess;
 import model.Exchange;
 import model.PubChurn;
 import model.PublisherAccount;
+import model.SDK;
 
 public class ExcelHelper {
 
@@ -92,6 +93,26 @@ public class ExcelHelper {
 		}
 		reader.close();
 		return ams;
+	}
+	
+	public List<SDK> readSdkData() throws IOException {
+		CSVReader reader = new CSVReader(new FileReader(path + "sdk.csv"));
+		List<SDK> data = new ArrayList<SDK>();
+		String[] nextLine = reader.readNext();
+		while ((nextLine = reader.readNext()) != null) {
+			SDK sdk = new SDK();
+			sdk.setMonth(nextLine[0]);
+			sdk.setIos6(Float.parseFloat(nextLine[1]));
+			sdk.setAndroid6(Float.parseFloat(nextLine[2]));
+			sdk.setIos5(Float.parseFloat(nextLine[3]));
+			sdk.setAndroid5(Float.parseFloat(nextLine[4]));
+			sdk.setBelow4_6(Float.parseFloat(nextLine[5]));
+			sdk.setJs(Float.parseFloat(nextLine[6]));
+			sdk.setWin_s2s(Float.parseFloat(nextLine[7]));
+			data.add(sdk);
+		}
+		reader.close();
+		return data;
 	}
 
 	public List<Exchange> readBusinessHighLevel() throws IOException {
