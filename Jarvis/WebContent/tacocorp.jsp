@@ -54,45 +54,58 @@
 	<div id="blank"></div>
 	<span class="pageHeading">TACOCORP REPORTS</span>
 	<div id="narrowblank"></div>
-	<div id="mainDiv">
+	<div id="mainDiv" ng-app="sdkApp">
 
-		<br>
-		<br>
+		<br> <br>
 		<div class="tabs">
 			<ul class="tab-links">
 				<li class="active"><a href="#tab1">SDK Adoption</a></li>
-				<li><a href="#tab2">TODO</a></li>
+				<li><a href="#tab2">Native</a></li>
+				<!-- <li><a href="#tab3">Video</a></li> -->
 			</ul>
 
 			<div class="tab-content">
-				<div id="tab1" class="tab active" ng-app="sdkApp"
-					ng-controller="sdkCtrl">
-					<br>
-					<br>
-					<div id="spinner" ng-hide="showData">
-						<img class="spinningwheel" src="images/spinningwheel.gif"/>
-					</div>
-					<div ng-show="showData">
-						<highchart id="nexPubChurnChart" config="nexPubChurnChart"></highchart>
+				<div id="tab1" class="tab active">
+					<div ng-controller="sdkCtrl">
+						<br> <br>
+						<div id="spinner" ng-hide="showData">
+							<img class="spinningwheel" src="images/spinningwheel.gif" />
+						</div>
+						<div>
+							<highchart id="sdkChart" config="sdkChart"></highchart>
+						</div>
 					</div>
 				</div>
 
 				<div id="tab2" class="tab">
-					<br>
-					<br>
-					<div id="spinner" ng-hide="hideNexRevLoading">
-						<img class="spinningwheel" src="images/spinningwheel.gif"/>
-					</div>
-					<div ng-show="hideNexRevLoading">
-						<highchart id="nexPubChurnRevChart" config="nexPubChurnRevChart"></highchart>
-					</div>
-					<br> <br> <br>
-					<div id="spinner" ng-hide="hideRevLoading">
-						<img class="spinningwheel" src="images/spinningwheel.gif" />
-					</div>
-					<div ng-show="hideRevLoading">
-						<highchart id="pubChurnRevChart" config="pubChurnRevChart"></highchart>
-					</div>
+				<div ng-controller="nativeCtrl">
+					<br> <br>
+					<div id="spinner" ng-hide="showNativeData">
+							<img class="spinningwheel" src="images/spinningwheel.gif" />
+						</div>
+						<div ng-show="showNativeData">
+							<highchart id="nativeReqsChart" config="nativeReqsChart"></highchart>
+						</div>
+						<br> <br>
+						<div ng-show="showNativeData">
+							<highchart id="nativeRevChart" config="nativeRevChart"></highchart>
+						</div>
+				</div>
+				</div>
+				<div id="tab3" class="tab">
+				<!-- <div ng-controller="nativeCtrl">
+					<br> <br>
+					<div id="spinner" ng-hide="showNativeData">
+							<img class="spinningwheel" src="images/spinningwheel.gif" />
+						</div>
+						<div ng-show="showNativeData">
+							<highchart id="nativeReqsChart" config="nativeReqsChart"></highchart>
+						</div>
+						<br> <br>
+						<div ng-show="showNativeData">
+							<highchart id="nativeRevChart" config="nativeRevChart"></highchart>
+						</div>
+				</div> -->
 				</div>
 			</div>
 		</div>
