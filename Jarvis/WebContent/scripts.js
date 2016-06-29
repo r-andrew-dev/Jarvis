@@ -195,6 +195,8 @@ function drawStackedColumnChartWide(categories, data, yAxisText, title) {
 	                			return this.value/1000000+"M";
 	                		else if(this.value > 1000)
 	                			return this.value/1000+"K";
+	                		else
+	                			return this.value;
 						}
 	                }
 	            },
