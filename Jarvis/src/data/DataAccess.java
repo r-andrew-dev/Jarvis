@@ -45,12 +45,12 @@ public class DataAccess {
 			+ "user=core_reader&password=read2011";
 	 
 
-	/*private static String NEX2_CONNECTION_STRING = "jdbc:mysql://n4d201s.nexage.com:5029/datawarehouse?"
-			+ "user=kbasu&password=*rkqNBAgsu4x^jA@";*/
+	private static String NEX2_CONNECTION_STRING = "jdbc:mysql://n4d201s.nexage.com:5029/datawarehouse?"
+			+ "user=kbasu&password=*rkqNBAgsu4x^jA@";
 
 	
-	 private static String NEX2_CONNECTION_STRING = "jdbc:mysql://192.168.100.116:5030/datawarehouse?" +
-	 "user=dw_reader&password=read2011";
+	/* private static String NEX2_CONNECTION_STRING = "jdbc:mysql://192.168.100.116:5030/datawarehouse?" +
+	 "user=dw_reader&password=read2011";*/
 	 
 	 private static String JARVIS_CONNECTION_STRING = "jdbc:mysql://10.172.98.67:3306/Jarvis?" +
 			 "user=kbasu&password=password123";
@@ -2851,6 +2851,69 @@ public class DataAccess {
 
 	}
 	
+	public List<Daily> getNativeData() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<Daily> dailyData = new ArrayList<Daily>();
+		String query = "select DATE(a11.start) NX_FACTREVENUEADNETDATE, "
+				+ "sum(a11.ads_requested_site) NXINBOUNDREQUESTS, sum(a11.revenue) NXREVENUE "
++"from datawarehouse.fact_revenue_adnet a11 join datawarehouse.dim_position a12 "
++ "on (a11.site_id = a12.site_id and a11.zone = a12.name) "
++"where a12.video_support in (3) "
++"and DATE(a11.start) >= date_sub(curdate(), interval 30 day) "
++"and a11.tag_monetization in (-1, 1) "
++"group by 1 "
++"order by 1";
+
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				Daily d = new Daily();
+				d.setDate(rs.getString(1));
+				String reqs = rs.getString(2);
+				d.setRequests(Integer.parseInt(reqs));
+				String rev = rs.getString(3);
+				d.setSpend(Float.parseFloat(rev));
+				dailyData.add(d);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return dailyData;
+
+	}
+	
 	public List<Viewability> getViewabilityData(String path) throws IOException {
 
 		Connection conn = null;
@@ -2891,7 +2954,7 @@ public class DataAccess {
 				sitesList.add(v);
 			}
 			
-			getNetworkViewabilityData(sitesList);
+			getNetworkViewabilityData(path, sitesList);
 
 		} catch (Exception ex) {
 
@@ -2923,14 +2986,14 @@ public class DataAccess {
 
 	}
 	
-	public List<Viewability> getNetworkViewabilityData(List<Viewability> sitesList) throws IOException {
+	public List<Viewability> getNetworkViewabilityData(String path, List<Viewability> sitesList) throws IOException {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
 		String query = "select * from Jarvis.Network_Viewability";
-		ExcelHelper eh = new ExcelHelper("local");
+		ExcelHelper eh = new ExcelHelper(path);
 		Map<String, String> ams = eh.readPubAMs();
 		
 		try {
