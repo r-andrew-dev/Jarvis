@@ -72,6 +72,14 @@
     <servlet-name>adQualityController</servlet-name>
     <servlet-class>controller.AdQualityController</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>sdkController</servlet-name>
+    <servlet-class>controller.SDKController</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>nativeController</servlet-name>
+    <servlet-class>controller.NativeController</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>javaAngularJS</servlet-name>
     <url-pattern>/javaAngularJS</url-pattern>
@@ -135,5 +143,13 @@
   <servlet-mapping>
     <servlet-name>adQualityController</servlet-name>
     <url-pattern>/adQualityController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>sdkController</servlet-name>
+    <url-pattern>/sdkController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>nativeController</servlet-name>
+    <url-pattern>/nativeController</url-pattern>
   </servlet-mapping>
 </web-app>
