@@ -34,14 +34,17 @@ public class DataAccess {
 	private static String CONNECTION_STRING = "jdbc:mysql://kyle-db-slave2.jumptap.com/tapmatch31?"
 			+ "user=kbasu&password=5U4qJvYHdWqX3";
 
-	private static String MMEDIA_CONNECTION_STRING = "jdbc:mysql://mmedia.db.corp.millennialmedia.com:3306/mmedia?"
+	private static String MMEDIA1_CONNECTION_STRING = "jdbc:mysql://mmedia.db.corp.millennialmedia.com:3306/mmedia?"
+			+ "user=kbasu&password=mMKb46^feB";
+	
+	private static String MMEDIA_CONNECTION_STRING = "jdbc:mysql://db07.prod.mia.millennialmedia.com:3306/mmedia?"
 			+ "user=kbasu&password=mMKb46^feB";
 
-	/*private static String NEX1_CONNECTION_STRING = "jdbc:mysql://n4d201s.nexage.com:3306/core?"
-			+ "user=kbasu&password=*rkqNBAgsu4x^jA@";*/
+	private static String NEX1_CONNECTION_STRING = "jdbc:mysql://n4d201s.nexage.com:3306/core?"
+			+ "user=kbasu&password=*rkqNBAgsu4x^jA@";
 
 	
-	private static String NEX1_CONNECTION_STRING = "jdbc:mysql://192.168.100.158:3306/core?"
+	private static String NEX1A_CONNECTION_STRING = "jdbc:mysql://192.168.100.158:3306/core?"
 			+ "user=core_reader&password=read2011";
 	 
 
@@ -49,8 +52,8 @@ public class DataAccess {
 			+ "user=kbasu&password=*rkqNBAgsu4x^jA@";
 
 	
-	/* private static String NEX2_CONNECTION_STRING = "jdbc:mysql://192.168.100.116:5030/datawarehouse?" +
-	 "user=dw_reader&password=read2011";*/
+	private static String NEX2A_CONNECTION_STRING = "jdbc:mysql://192.168.100.116:5030/datawarehouse?" +
+	 "user=dw_reader&password=read2011";
 	 
 	 private static String JARVIS_CONNECTION_STRING = "jdbc:mysql://10.172.98.67:3306/Jarvis?" +
 			 "user=kbasu&password=password123";
@@ -60,6 +63,55 @@ public class DataAccess {
 	private String mmediaReps = "'ddroddy@millennialmedia.com','jparatore@millennialmedia.com','ogillis@millennialmedia.com','abennett@millennialmedia.com','tyannopoulos@millennialmedia.com','jschuerholz@millennialmedia.com','hulloa@millennialmedia.com'";
 
 	public List<Account> accounts = new ArrayList<Account>();
+	
+	private Connection getConnection(String type) {
+		Connection conn = null;
+		if(type.equals("nex_core")) {
+			try {
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			} catch (Exception e) {
+				try {
+					Class.forName("com.mysql.jdbc.Driver").newInstance();
+					conn = DriverManager.getConnection(NEX1A_CONNECTION_STRING);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				} 
+				
+			} 
+			
+		} else if(type.equals("nex_dw")) {
+			try {
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			} catch (Exception e) {
+				try {
+					Class.forName("com.mysql.jdbc.Driver").newInstance();
+					conn = DriverManager.getConnection(NEX2A_CONNECTION_STRING);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				} 
+				
+			} 
+			
+		} else if(type.equals("mmedia")) {
+			try {
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			} catch (Exception e) {
+				try {
+					Class.forName("com.mysql.jdbc.Driver").newInstance();
+					conn = DriverManager.getConnection(MMEDIA1_CONNECTION_STRING);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				} 
+				
+			} 
+			
+		}
+		
+		return conn;
+	}
 
 	public void getPerformance() {
 
@@ -256,8 +308,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(
 					"select YestSpend.name, YestSpend.spend, DayBeforeSpend.spend, round(Last7Spend.spend/7, 2), 0, round(YestSpend.spend/YestConvs.convs, 2),  "
@@ -353,8 +405,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(
 					"select YestSpend.name, YestSpend.spend, DayBeforeSpend.spend, round(Last7Spend.spend/7, 2), 0, round(YestSpend.spend/YestConvs.convs, 2),  "
@@ -596,8 +647,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(
 					"select sum(YestSpend.spend), sum(DayBeforeSpend.spend), round(sum(Last7Spend.spend)/7, 2), 0,  "
@@ -750,8 +800,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("select costs.date, costs.spend, conversions.convs, activity.views, activity.clicks "
 					+ "from "
@@ -1001,8 +1050,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("select distinct amid, amname " + "from "
 					+ "(select am.id amid, am.name amname, p.id pid, p.name pname "
@@ -1054,8 +1102,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("select p.id, p.name, s.id, s.name, sum(da.views) views "
 					+ "from mmedia.publishers p, mmedia.sites s, mmedia.rollup_site_country_carrier_day_activity da "
@@ -1137,8 +1184,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("select s.id, s.name,  " + "case  "
 					+ "when s.website like '%itunes.apple.com%' then substring_index(substring(s.website, locate('/id', s.website)+3), '?', 1)  "
@@ -1214,8 +1260,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("select p.name from mmedia.placements p where p.id = " + placementId + " ");
 
@@ -1281,8 +1326,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1366,8 +1410,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			conn = getConnection("nex_dw");   
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1421,8 +1464,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1477,8 +1519,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, pubId);
 			stmt.setInt(2, year);
@@ -1535,8 +1576,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			
+			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1589,8 +1630,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			
+			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1640,8 +1681,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1700,8 +1741,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1792,8 +1833,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1852,8 +1893,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1907,8 +1948,8 @@ public class DataAccess {
 			query = query + "limit 10";
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1960,8 +2001,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			
+			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2019,8 +2060,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 			
@@ -2239,8 +2280,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2297,8 +2338,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, id);
 			rs = stmt.executeQuery();
@@ -2346,8 +2387,7 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
+			conn = getConnection("mmedia");
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, id);
 			rs = stmt.executeQuery();
@@ -2412,8 +2452,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2478,8 +2518,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2543,8 +2583,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2609,8 +2649,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2676,8 +2716,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			
+			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2743,8 +2783,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			
+			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2808,8 +2848,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
+			
+			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -2869,8 +2909,8 @@ public class DataAccess {
 
 		try {
 
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
+			
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
