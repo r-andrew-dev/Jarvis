@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 public class AdQuality implements Serializable {
 
@@ -9,6 +10,15 @@ public class AdQuality implements Serializable {
 	private String bidder;
 	private int verified;
 	private int unverified;
+	private String date;
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
 
 	public String getBidder() {
 		return bidder;
@@ -33,5 +43,11 @@ public class AdQuality implements Serializable {
 	public void setUnverified(int unverified) {
 		this.unverified = unverified;
 	}
+	
+	public static Comparator<AdQuality> COMPARE_BY_DATE_ASC = new Comparator<AdQuality>() {
+        public int compare(AdQuality one, AdQuality other) {
+            return one.date.compareTo(other.date);
+        }
+    };
 
 }

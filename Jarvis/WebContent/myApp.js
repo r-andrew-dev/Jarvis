@@ -16,6 +16,7 @@ var tierOptApp = angular.module('tierOptApp', ["highcharts-ng","ngAnimate","ui.b
 var viewabilityApp = angular.module('viewabilityApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
 var sdkApp = angular.module('sdkApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
 var adqualityApp = angular.module('adqualityApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
+var adqualityBidderApp = angular.module('adqualityBidderApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
 
 
 

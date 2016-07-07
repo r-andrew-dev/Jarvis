@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -2822,6 +2823,74 @@ public class DataAccess {
 
 		}
 
+		return biddersList;
+
+	}
+	
+	public List<AdQuality> getBidderDailyData(String bidder) {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<AdQuality> biddersList = new ArrayList<AdQuality>();
+		String query = "select v.date, v.count, u.count "
+						+"from "
+						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"from core.company c, core.creative_verification cv "
+						+"where c.name = '"+bidder+"' "
+						+"and cv.buyer_pid = c.pid "
+						+"and cv.status = 1 "
+						+"group by 1) v left outer join "
+						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"from core.company c, core.creative_verification cv "
+						+"where c.name = '"+bidder+"' "
+						+"and cv.buyer_pid = c.pid "
+						+"and cv.status = 2 "
+						+"group by 1) u on v.date = u.date "
+						+"order by v.date desc limit 30";
+
+		try {
+
+			
+			conn = getConnection("nex_core");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				AdQuality aq = new AdQuality();
+				aq.setDate(rs.getString(1));
+				aq.setVerified(rs.getInt(2));
+				aq.setUnverified(rs.getInt(3));
+				biddersList.add(aq);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+		
+		Collections.sort(biddersList, AdQuality.COMPARE_BY_DATE_ASC);
 		return biddersList;
 
 	}

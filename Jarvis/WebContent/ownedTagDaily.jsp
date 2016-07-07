@@ -72,7 +72,7 @@
 				<tr class="headerRow">
 					<th>Tag</th>
 					<th>Date</th>
-					<th>Outbound Requests</th>
+					<th>Requests</th>
 					<th>Cleared</th>
 					<th>Impressions</th>
 					<th>Clicks</th>
@@ -101,7 +101,7 @@
 				<tr class="headerRow">
 					<th>Tag</th>
 					<th>Date</th>
-					<th>Outbound Requests</th>
+					<th>Requests</th>
 					<th>Cleared</th>
 					<th>Impressions</th>
 					<th>Clicks</th>

@@ -29,6 +29,10 @@ public class AdQualityController extends HttpServlet {
 			getBiddersData(request, response);
 		else if(type.equals("daily"))
 			getDailyData(request, response);
+		else if(type.equals("bidder")) {
+			String bidder = request.getParameter("bidder");
+			getBidderDailyData(request, response, bidder);
+		}
 	}
 	
 	private void getBiddersData(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -43,6 +47,14 @@ public class AdQualityController extends HttpServlet {
 		DataAccess d = new DataAccess();
 		List<Daily> tags = d.getAdQualityDailyData();
 		String json = new Gson().toJson(tags);
+		response.setContentType("application/json");
+		response.getWriter().write(json);
+	}
+	
+	private void getBidderDailyData(HttpServletRequest request, HttpServletResponse response, String bidder) throws IOException {
+		DataAccess d = new DataAccess();
+		List<AdQuality> data = d.getBidderDailyData(bidder);
+		String json = new Gson().toJson(data);
 		response.setContentType("application/json");
 		response.getWriter().write(json);
 	}

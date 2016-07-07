@@ -70,7 +70,7 @@
 			<table class="dataTable" style="width: 100%;">
 				<tr class="headerRow">
 					<th>Tag</th>
-					<th>Outbound Requests</th>
+					<th>Requests</th>
 					<th>Cleared</th>
 					<th>Impressions</th>
 					<th>Clicks</th>
@@ -95,7 +95,7 @@
 			<table class="dataTable" style="width: 100%;">
 				<tr class="headerRow">
 					<th>Tag</th>
-					<th>Outbound Requests</th>
+					<th>Requests</th>
 					<th>Cleared</th>
 					<th>Impressions</th>
 					<th>Clicks</th>

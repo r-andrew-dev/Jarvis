@@ -2616,7 +2616,7 @@ adqualityApp.controller('adqualityCtrl', function($scope, $http) {
 		url : "adQualityController?type=bidders"
 	}).then(function mySuccess(response) {
 		$scope.data = response.data;
-		$scope.showData = true;
+		//$scope.showData = true;
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
@@ -2664,7 +2664,7 @@ adqualityApp.controller('adqualityCtrl', function($scope, $http) {
 				'Values',
 				'Daily Verified vs Unverifiable', 1);
 		
-		
+		$scope.showData = true;
 		
 	}, function myError(response) {
 		$scope.sites = response.statusText;
@@ -2682,5 +2682,75 @@ adqualityApp.filter('percentage', [ '$filter', function($filter) {
 		return $filter('number')(input * 100, decimals) + '%';
 	};
 } ]);
+
+adqualityBidderApp.config(function($locationProvider) {
+	$locationProvider.html5Mode({
+			  enabled: true,
+			  requireBase: false
+	});
+});
+
+adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http, $location) {
+
+	$scope.showData = false;
+	
+	$scope.bidderName = $location.search().bidder; 
+	
+	$http({
+		method : "GET",
+		url : "adQualityController?type=bidder&bidder="+$scope.bidderName
+	}).then(function mySuccess(response) {
+		$scope.data = response.data;
+		var trends = $scope.data;
+		
+		var categories = [];
+		var data = [];
+
+		var verifiedDataObject = {};
+		var unverifiedDataObject = {};
+
+		verifiedDataObject['name'] = 'Verified';
+		unverifiedDataObject['name'] = 'Unverifiable';
+
+		var verifiedValues = [];
+		var unverifiedValues = [];
+		
+		for (var i = 0; i < Object
+				.keys(trends).length; i++) {
+			categories
+					.push(trends[i].date);
+			verifiedValues
+					.push(trends[i].verified);
+			unverifiedValues
+					.push(trends[i].unverified);
+			
+		}
+
+		verifiedDataObject['data'] = verifiedValues;
+		unverifiedDataObject['data'] = unverifiedValues;
+
+
+		data.push(verifiedDataObject);
+		data.push(unverifiedDataObject);
+
+
+		$scope.theoremChart = drawLineChartWide(
+				categories,
+				data,
+				'Values',
+				'Daily Verified vs Unverifiable', 0);
+
+		$scope.showData = true;
+	}, function myError(response) {
+		$scope.sites = response.statusText;
+	});
+	
+	$scope.order = function(predicate) {
+		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
+				: false;
+		$scope.predicate = predicate;
+	};
+});
+
 
 
