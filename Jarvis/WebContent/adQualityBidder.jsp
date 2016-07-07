@@ -57,7 +57,15 @@
 	<div id="blank"></div>
 	<span class="pageHeading">AD VERIFICATION REPORT</span>
 	<div id="narrowblank"></div>
-	<div id="mainDiv" ng-app="adqualityApp" ng-controller="adqualityCtrl">
+	<div id="mainDiv" ng-app="adqualityBidderApp"
+		ng-controller="adqualityBidderCtrl">
+		<span class="pageHeading">Bidder: {{bidderName}}</span> <span
+			style="float: right; font-size: 12px; padding-right: 10px;"> <a
+			style="color: black; visited: black;"
+			href="javascript:window.location.href='adquality.jsp'">Back to
+				all bidders</a>
+		</span> <br>
+		<br>
 		<div id="spinner" ng-hide="showData">
 			<img class="spinningwheel" src="images/spinningwheel.gif" />
 		</div>
@@ -67,7 +75,7 @@
 				<highchart id="theoremChart" config="theoremChart"></highchart>
 			</div>
 
-			<br>
+			<!-- <br>
 			<br>
 
 			<div
@@ -76,35 +84,33 @@
 					ng-model="filter.bidder"
 					style="border: 0px solid #000000; width: 300px; height: 20px; font-size: 15px;"
 					placeholder="Search bidder...">
-			</div>
+			</div>-->
 			<br>
 			<table class="dataTable" style="width: 100%;"
-				ng-init="predicate = 'bidder'; reverse = false;">
+				ng-init="predicate = 'date'; reverse = false;">
 				<tr class="headerRow">
-					<th><a href="#" ng-click="order('bidder')">Bidder</a><span
-						class="sortorder" ng-show="predicate === 'bidder'"
+					<th><a href="#" ng-click="order('date')">Date</a><span
+						class="sortorder" ng-show="predicate === 'date'"
 						ng-class="{reverse:reverse}"></span></th>
-					<th><a href="#" ng-click="order('verified')">Verified
-							Count</a><span class="sortorder" ng-show="predicate === 'verified'"
+					<th><a href="#" ng-click="order('verified')">Verified </a><span
+						class="sortorder" ng-show="predicate === 'verified'"
 						ng-class="{reverse:reverse}"></span></th>
-					<th><a href="#" ng-click="order('verifiedp')">Verified %</a><span
+					<!-- <th><a href="#" ng-click="order('verifiedp')">Verified %</a><span
 						class="sortorder" ng-show="predicate === 'verifiedp'"
-						ng-class="{reverse:reverse}"></span></th>
+						ng-class="{reverse:reverse}"></span></th> -->
 					<th><a href="#" ng-click="order('unverified')">Unverifiable
-							Count</a><span class="sortorder" ng-show="predicate === 'unverified'"
+					</a><span class="sortorder" ng-show="predicate === 'unverified'"
 						ng-class="{reverse:reverse}"></span></th>
-					<th><a href="#" ng-click="order('unverifiedp')">Unverifiable
+					<!-- <th><a href="#" ng-click="order('unverifiedp')">Unverifiable
 							%</a><span class="sortorder" ng-show="predicate === 'unverifiedp'"
-						ng-class="{reverse:reverse}"></span></th>
+						ng-class="{reverse:reverse}"></span></th> -->
 				</tr>
-				<tr
-					ng-repeat="bidder in data | orderBy: predicate : reverse | filter: filter"
-					ng-init="bidder.verifiedp = bidder.verified/(bidder.verified+bidder.unverified); bidder.unverifiedp = bidder.unverified/(bidder.verified+bidder.unverified);">
-					<td><a href="adQualityBidder.jsp?bidder={{bidder.bidder}}">{{ bidder.bidder }}</a></td>
+				<tr ng-repeat="bidder in data | orderBy: predicate : reverse">
+					<td>{{ bidder.date }}</td>
 					<td>{{ bidder.verified | number }}</td>
-					<td>{{ bidder.verifiedp | percentage:2 }}</td>
+					<!-- <td>{{ bidder.verifiedp | percentage:2 }}</td> -->
 					<td>{{ bidder.unverified | number }}</td>
-					<td>{{ bidder.unverifiedp | percentage:2 }}</td>
+					<!-- <td>{{ bidder.unverifiedp | percentage:2 }}</td> -->
 				</tr>
 			</table>
 		</div>
