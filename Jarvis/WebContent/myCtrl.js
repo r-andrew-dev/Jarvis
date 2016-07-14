@@ -720,7 +720,7 @@ exchangeApp.filter('rank', [ '$filter', function($filter) {
 supplyApp
 		.controller(
 				"supplyCtrl",
-				function($scope, $http) {
+				function($scope, $http, $uibModal, $log) {
 					$scope.showLoading = true;
 
 					$scope.filterCondition = {
@@ -791,6 +791,7 @@ supplyApp
 
 											if (!placement.showChart) {
 												var data = response.data;
+												$scope.rawData = data;
 												var placementName = data.placementName;
 												var placementId = data.placementId;
 												var greenTrends = data.greenTrends;
@@ -852,13 +853,83 @@ supplyApp
 														ecpmTrendsData, 'eCPM',
 														'eCPM Last 7 Days');
 												placement.showChart = true;
+												
 											}
 										},
 										function myError(response) {
 											$scope.siteData = response.statusText;
 										});
 					}
+					
+					$scope.showData = function() {
+
+						var modalInstance = $uibModal
+								.open({
+									animation : $scope.animationsEnabled,
+									templateUrl : 'supplyModalContent.html',
+									controller : 'ModalInstanceCtrl',
+									size : 'lg',
+									resolve : {
+										data : function() {
+											return $scope.rawData;
+										}
+									}
+								});
+
+						modalInstance.result.then(function(selectedItem) {
+							$scope.selected = selectedItem;
+						}, function() {
+							$log.info('Modal dismissed at: ' + new Date());
+						});
+
+					};
+					
+					$scope.exportData = function() {
+					        var blob = new Blob([document.getElementById('exportable').innerHTML], {
+					            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+					        });
+					        saveAs(blob, "data.xls");
+				    };
+					
+					
 				});
+
+supplyApp.controller('ModalInstanceCtrl', function($scope,
+		$uibModalInstance, data) {
+
+	$scope.showTable = false;
+	var rawData = [];
+	var greenTrends = data.greenTrends;
+	var nexTrends = data.nexTrends;
+	
+	for (var i = 0; i < Object.keys(greenTrends).length; i++) {
+		var dataObject = {};
+		dataObject['date'] = greenTrends[i].date;
+		dataObject['greenReqs'] = greenTrends[i].requests;
+		dataObject['greenEcpm'] = greenTrends[i].spend/greenTrends[i].impressions*1000;
+		dataObject['nexReqs'] = nexTrends[i].requests;
+		dataObject['nexEcpm'] = nexTrends[i].spend/nexTrends[i].impressions*1000;
+		rawData.push(dataObject);
+	}
+	var obj = {trends:rawData};
+	$scope.data = obj;
+	$scope.showTable = true;
+
+	$scope.ok = function() {
+		$uibModalInstance.close();
+	};
+
+	$scope.cancel = function() {
+		$uibModalInstance.dismiss('cancel');
+	};
+	
+	$scope.exportData = function() {
+        var blob = new Blob([document.getElementById('exportable').innerHTML], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+        });
+        saveAs(blob, "data.xls");
+};
+});
 
 auctionsApp
 		.controller(
@@ -2238,7 +2309,8 @@ churnApp.controller('ModalInstanceCtrl', function($scope, $http,
 
 ooApp.controller('ooCtrl', function($scope, $http) {
 	$scope.showTable = false;
-
+	$scope.type = 'Current Month'
+	
 	$http({
 		method : "GET",
 		url : "ooController?type=mtd"
@@ -2248,6 +2320,20 @@ ooApp.controller('ooCtrl', function($scope, $http) {
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
+	
+	$scope.getLastMonth = function() {
+		$scope.showTable = false;
+		$http({
+			method : "GET",
+			url : "ooController?type=lmtd"
+		}).then(function mySuccess(response) {
+			$scope.type = 'Previous Month'
+			$scope.data = response.data;
+			$scope.showTable = true;
+		}, function myError(response) {
+			$scope.sites = response.statusText;
+		});
+	};
 });
 
 ooApp.filter('percentage', [ '$filter', function($filter) {

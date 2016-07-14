@@ -75,16 +75,6 @@
 				<highchart id="theoremChart" config="theoremChart"></highchart>
 			</div>
 
-			<!-- <br>
-			<br>
-
-			<div
-				style="border: 2px solid grey; padding: 1px 10px 1px 2px; width: 25%;">
-				<i class="fa fa-search"></i> <input type="text" name="filter"
-					ng-model="filter.bidder"
-					style="border: 0px solid #000000; width: 300px; height: 20px; font-size: 15px;"
-					placeholder="Search bidder...">
-			</div>-->
 			<br>
 			<table class="dataTable" style="width: 100%;"
 				ng-init="predicate = 'date'; reverse = false;">

@@ -2501,6 +2501,80 @@ public class DataAccess {
 
 	}
 	
+	public List<Site> getOOSitesLastMTD() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<Site> sitesList = new ArrayList<Site>();
+		String query = "select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
+						+"sum(f.ads_clicked), sum(f.revenue) rev "
+						+"from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+						+"where s.name like '%aol%' "
+						+"and f.site_id = s.id "
+						+"and date(f.start) >= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 month)) and date(f.start) <= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 day)) "
+						+"and t.id = f.source_type "
+						+"group by 1,3 having rev > 0 "
+						+"union "
+						+"select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
+						+"sum(f.ads_clicked), sum(f.revenue) rev "
+						+"from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+						+"where s.name like '%verizon%' "
+						+"and f.site_id = s.id "
+						+"and date(f.start) >= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 month)) and date(f.start) <= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 day)) "
+						+"and t.id = f.source_type "
+						+"group by 1,3 having rev > 0 ";
+
+		try {
+
+			
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				Site s = new Site();
+				s.setSiteId(rs.getString(1));
+				s.setSiteName(rs.getString(2));
+				s.setAdSourceType(rs.getString(3));
+				s.setTotalRequests(rs.getInt(4));
+				s.setTotalCleared(rs.getInt(5));
+				s.setTotalImpressions(rs.getInt(6));
+				s.setTotalClicked(rs.getInt(7));
+				s.setRev(rs.getFloat(8));
+				sitesList.add(s);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return sitesList;
+
+	}
+	
 	public List<Site> getTagsMTD(String siteId) {
 
 		Connection conn = null;

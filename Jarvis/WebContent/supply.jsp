@@ -7,13 +7,23 @@
 <link rel="stylesheet" type="text/css" href="styles.css">
 <link rel="stylesheet" type="text/css"
 	href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link href="bootstrap.css" rel="stylesheet">
 <link rel="icon" type="image/png" href="images/logo.png">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+<script
+	src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+<script
+	src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.2.js"></script>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="highcharts-ng.js"></script>
+<script
+	src="https://rawgithub.com/eligrey/FileSaver.js/master/FileSaver.js"
+	type="text/javascript"></script>
 <script src="scripts.js" /></script>
 <script src="myApp.js" /></script>
 <script src="myCtrl.js" /></script>
@@ -88,6 +98,33 @@
 						<div id="{{placement.placementId}}" class="panelContent"
 							ng-show="placementCollapsed">
 							<hr>
+							
+							<!-- Modal code -->
+	<script type="text/ng-template" id="supplyModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Data</h3>
+        </div>
+        <div class="modal-body">
+<div id="exportable">
+			<table class="dataTable" style="width: 100%;" ng-show="showTable">
+			<tr class="headerRow">
+			<th>Date</th><th>Green requests</th><th>Green eCPM</th>
+			</tr>
+			<tr ng-repeat="day in data.trends">
+			<td>{{ day.date }}</td><td>{{ day.greenReqs | number:0 }}</td><td>{{ day.greenEcpm | currency }}</td>
+			<td>{{ day.nexReqs | number:0 }}</td><td>{{ day.nexEcpm | currency }}</td>
+			</tr>
+			</table>
+</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-primary" ng-click="exportData()">Export</button>&nbsp;&nbsp;
+        </div>
+    </script>
+    <!-- Modal code -->
+							<span style="float:right;font-size:12px;" ng-show="placement.showChart"><a href="#" ng-click="showData()">Show data</a></span><br><br>
+							
 							<table>
 								<tr>
 									<td><highchart id="{{placement.placementId}}"

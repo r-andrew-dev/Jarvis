@@ -59,7 +59,9 @@
 			<img class="spinningwheel" src="images/spinningwheel.gif" />
 		</div>
 		<div ng-show="showTable">
-			<span class="pageSubHeading">RTB MTD Data - All Sites</span><br><hr><br>
+			<span class="pageSubHeading">RTB Data - All Sites - {{ type }}</span>
+			<span style="font-size:12px;float:right;"><a href="#" ng-click="getLastMonth()">See previous month</a>&nbsp;&nbsp;&nbsp;</span>
+			<br><hr><br>
 			<table class="dataTable" style="width: 100%;">
 				<tr class="headerRow">
 					<th>Site</th>
@@ -84,7 +86,7 @@
 			</table>
 			<br>
 			<br>
-			<span class="pageSubHeading">Mediation MTD Data - All Sites</span><br><hr><br>
+			<span class="pageSubHeading">Mediation Data - All Sites - {{ type }}</span><br><hr><br>
 			<table class="dataTable" style="width: 100%;">
 				<tr class="headerRow">
 					<th>Site</th>

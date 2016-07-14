@@ -27,6 +27,8 @@ public class OOController extends HttpServlet {
 		
 		if(type.equals("mtd"))
 			getMTD(request, response);	
+		if(type.equals("lmtd"))
+			getLastMTD(request, response);	
 		if(type.equals("site")) {
 			String siteId = request.getParameter("id").toString();
 			getSiteDaily(request, response, siteId);
@@ -44,6 +46,14 @@ public class OOController extends HttpServlet {
 	private void getMTD(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		DataAccess d = new DataAccess();
 		List<Site> sites = d.getOOSitesMTD();
+		String json = new Gson().toJson(sites);
+		response.setContentType("application/json");
+		response.getWriter().write(json);
+	}
+	
+	private void getLastMTD(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		DataAccess d = new DataAccess();
+		List<Site> sites = d.getOOSitesLastMTD();
 		String json = new Gson().toJson(sites);
 		response.setContentType("application/json");
 		response.getWriter().write(json);
