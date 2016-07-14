@@ -60,7 +60,8 @@
 		</div>
 		<div ng-show="showTable">
 			<span class="pageSubHeading">RTB Data - All Sites - {{ type }}</span>
-			<span style="font-size:12px;float:right;"><a href="#" ng-click="getLastMonth()">See previous month</a>&nbsp;&nbsp;&nbsp;</span>
+			<span style="font-size:12px;float:right;"><a href="#" ng-click="getLastMonth()" ng-if="type == 'Current Month'">See previous month</a>
+			<a href="owned.jsp" ng-if="type == 'Previous Month'">See current month</a>&nbsp;&nbsp;&nbsp;</span>
 			<br><hr><br>
 			<table class="dataTable" style="width: 100%;">
 				<tr class="headerRow">
