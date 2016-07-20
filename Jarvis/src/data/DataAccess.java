@@ -3240,5 +3240,247 @@ public class DataAccess {
 		return sitesList;
 
 	}
+	
+	public Map<String, String[]> getNexSites() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select s.id, s.alias, case when sz.dimensions = '300x50 Flex' then '320x50' else sz.dimensions end "
+						+"from tapmatch31.PASite s, tapmatch31.AdSpot t, tapmatch31.AdSize sz "
+						+"where s.alias like 'nex_%' "
+						+"and t.id = s.defaultAdSpotId "
+						+"and sz.id = t.adSize";
+		
+		Map<String, String[]> nexSites = new HashMap<String, String[]>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(CONNECTION_STRING);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				String[] values = new String[2];
+				values[0] = rs.getString(2);
+				values[1] = rs.getString(3);
+				nexSites.put(rs.getString(1), values);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return nexSites;
+
+	}
+	
+	public Map<String, String[]> getNexSitesData() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select s.pid, c.name, s.name, "
+						+"case "
+						+"when s.platform like 'ANDROID%' then 'Android' "
+						+"when s.platform like 'OTHER' then 'Mobile Web' "
+						+"else 'iOS' "
+						+"end "
+						+"from core.site s, core.company c "
+						+"where c.pid = s.company_pid";
+
+		Map<String, String[]> nexSites = new HashMap<String, String[]>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_core");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				String[] values = new String[3];
+				values[0] = rs.getString(2);
+				values[1] = rs.getString(3);
+				values[2] = rs.getString(4);
+				nexSites.put(rs.getString(1), values);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return nexSites;
+
+	}
+	
+	public Map<String, String> getNexDailyAvails() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select s.id, round(sum(ads_requested)/3, 0) "
+						+"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site t "
+						+"where t.site_id = s.id "
+						+"and date(t.start) >= date_sub(curdate(), interval 3 day) and date(t.start) < curdate() "
+						+"group by 1";
+
+		Map<String, String> nexAvails = new HashMap<String, String>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				nexAvails.put(rs.getString(1), rs.getString(2));
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return nexAvails;
+
+	}
+	
+	public Map<String, Map<String, String>> getNexDelivered() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select s.id, date(t.start), sum(ads_displayed) "
+						+"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site t "
+						+"where t.site_id = s.id "
+						+"and date(t.start) >= date_sub(curdate(), interval 15 day) "
+						+"group by 1,2 order by 1";
+		
+		Map<String, String> dateValues;
+		Map<String, Map<String, String>> siteValues = new HashMap<String, Map<String, String>>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				String siteId = rs.getString(1);
+				String date = rs.getString(2);
+				String imps = rs.getString(3);
+				if(!siteValues.containsKey(siteId)) {
+					dateValues = new HashMap<String, String>();
+					dateValues.put(date, imps);
+					siteValues.put(siteId, dateValues);
+				} else {
+					dateValues = siteValues.get(siteId);
+					dateValues.put(date, imps);
+					siteValues.put(siteId, dateValues);
+				}
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return siteValues;
+
+	}
 
 }

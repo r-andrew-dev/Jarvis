@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -10,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import data.DataAccess;
 import model.Viewability;
+import utils.ExcelHelper;
 
 public class ViewabilityController extends HttpServlet {
 
@@ -24,11 +25,22 @@ public class ViewabilityController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String path = request.getParameter("path").toString();
-		DataAccess d = new DataAccess();
-		List<Viewability> tags = d.getViewabilityData(path);
+		ExcelHelper eh = new ExcelHelper(path);
+		List<Viewability> tags = eh.readViewabilityData();
+		try {
+			tags.addAll(readNewData(path));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		String json = new Gson().toJson(tags);
 		response.setContentType("application/json");
 		response.getWriter().write(json);
+	}
+	
+	private List<Viewability> readNewData(String path) throws IOException, ParseException {
+		ExcelHelper eh = new ExcelHelper(path);
+		List<Viewability> tags = eh.readNewViewabilityData();
+		return tags;
 	}
 
 }
