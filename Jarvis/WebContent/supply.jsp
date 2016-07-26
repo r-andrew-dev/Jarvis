@@ -108,7 +108,7 @@
 <div id="exportable">
 			<table class="dataTable" style="width: 100%;" ng-show="showTable">
 			<tr class="headerRow">
-			<th>Date</th><th>Green requests</th><th>Green eCPM</th>
+			<th>Date</th><th>Green requests</th><th>Green eCPM</th><th>Nexage requests</th><th>Nexage eCPM</th>
 			</tr>
 			<tr ng-repeat="day in data.trends">
 			<td>{{ day.date }}</td><td>{{ day.greenReqs | number:0 }}</td><td>{{ day.greenEcpm | currency }}</td>
@@ -132,6 +132,26 @@
 									</td>
 									<td><highchart id="{{placement.placementName}}"
 											config="placement.ecpmChart" ng-show="placement.showChart"></highchart>
+									</td>
+								</tr>
+								<tr>
+									<td>
+									<table class="dataTable" style="width: 100%;" ng-show="placement.showChart">
+									<tr class="headerRow"><td>Country</td><td>Green Requests</td></tr>
+									<tr ng-repeat="country in placement.greenCountryReqs">
+										<td>{{ country.code }}</td>
+										<td>{{ country.z | number:0 }}</td>
+									</tr>
+									</table>
+									</td>
+									<td>
+									<table class="dataTable" style="width: 100%;" ng-show="placement.showChart">
+									<tr class="headerRow"><td>Country</td><td>Nexage Requests</td></tr>
+									<tr ng-repeat="country in placement.nexCountryReqs">
+										<td>{{ country.code }}</td>
+										<td>{{ country.z | number:0 }}</td>
+									</tr>
+									</table>
 									</td>
 								</tr>
 							</table>
