@@ -1270,7 +1270,8 @@ public class DataAccess {
 			}
 
 			p.setGreenTrends(getGreenSiteVolume(p.getPlacementId()));
-			p.setNexTrends(getNexSiteVolume(bundleId, dimension));
+			p.setNexTrends(getNexSiteVolume(bundleId, dimension, p));
+			p.setGreenCountryReqs(getGreenCountryReqs(p.getPlacementId()));
 
 		} catch (Exception ex) {
 
@@ -1299,6 +1300,119 @@ public class DataAccess {
 		}
 
 		return p;
+	}
+	
+	public void getNexCountryReqs(Placement p, String siteIdList) {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<GenericObject> countries = new ArrayList<GenericObject>();
+		String query = "select t.country, sum(t.ads_requested) "
+						+"from datawarehouse.fact_traffic_site t "
+						+"where t.site_id in ("+siteIdList+") "
+						+"and date(t.start) >= date_sub(curdate(), interval 7 day) and date(t.start) < curdate() "
+						+"group by 1 "
+						+"order by 2 desc limit 5";
+
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				GenericObject o = new GenericObject();
+				o.setAttribute(rs.getString(1));
+				o.setRequests(rs.getLong(2));
+				countries.add(o);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		p.setNexCountryReqs(countries);
+
+	}
+	
+	public List<GenericObject> getGreenCountryReqs(String placementId) {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<GenericObject> countries = new ArrayList<GenericObject>();
+		String query = "select c.alpha_3, sum(r.views) "
+						+"from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c "
+						+"where r.placement_id = "+placementId+" "
+						+"and r.dayperiod >= datediff(curdate(), '1970-01-01')-7 and r.dayperiod < datediff(curdate(), '1970-01-01') "
+						+"and c.id = r.country_id "
+						+"group by 1 "
+						+"order by 2 desc limit 5";
+		
+		try {
+
+			conn = getConnection("mmedia");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				GenericObject o = new GenericObject();
+				o.setAttribute(rs.getString(1));
+				o.setRequests(rs.getLong(2));
+				countries.add(o);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return countries;
 	}
 
 	public List<Daily> getGreenSiteVolume(String placementId) {
@@ -1370,7 +1484,7 @@ public class DataAccess {
 
 	}
 
-	public List<Daily> getNexSiteVolume(String bundleId, String dimension) {
+	public List<Daily> getNexSiteVolume(String bundleId, String dimension, Placement p) {
 
 		Connection conn = null;
 		Statement stmt = null;
@@ -1399,6 +1513,8 @@ public class DataAccess {
 			tagIdList = tagIdList.substring(0, tagIdList.length() - 1);
 		else
 			return sites;
+		
+		getNexCountryReqs(p, siteIdList);
 
 		String query = "select requests.date, requests.reqs, round(costs.rev, 0), requests.imps " + "from "
 				+ "(select date(f.start) date, sum(f.ads_requested) reqs, sum(f.ads_served) imps "

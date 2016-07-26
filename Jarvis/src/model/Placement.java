@@ -16,6 +16,25 @@ public class Placement {
 	private float avgEcpm;
 	private String tier;
 	private String position;
+	private List<GenericObject> greenCountryReqs;
+	private List<GenericObject> nexCountryReqs;
+
+
+	public List<GenericObject> getGreenCountryReqs() {
+		return greenCountryReqs;
+	}
+
+	public void setGreenCountryReqs(List<GenericObject> greenCountryReqs) {
+		this.greenCountryReqs = greenCountryReqs;
+	}
+
+	public List<GenericObject> getNexCountryReqs() {
+		return nexCountryReqs;
+	}
+
+	public void setNexCountryReqs(List<GenericObject> nexCountryReqs) {
+		this.nexCountryReqs = nexCountryReqs;
+	}
 
 	public String getTier() {
 		return tier;

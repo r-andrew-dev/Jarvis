@@ -791,6 +791,8 @@ supplyApp
 
 											if (!placement.showChart) {
 												var data = response.data;
+												placement.greenCountryReqs = data.greenCountryReqs;
+												placement.nexCountryReqs = data.nexCountryReqs;
 												$scope.rawData = data;
 												var placementName = data.placementName;
 												var placementId = data.placementId;
@@ -901,8 +903,13 @@ supplyApp.controller('ModalInstanceCtrl', function($scope,
 	var rawData = [];
 	var greenTrends = data.greenTrends;
 	var nexTrends = data.nexTrends;
+	var len = 0;
+	if(Object.keys(greenTrends).length < Object.keys(nexTrends).length)
+		len = Object.keys(greenTrends).length;
+	else
+		len = Object.keys(nexTrends).length;
 	
-	for (var i = 0; i < Object.keys(greenTrends).length; i++) {
+	for (var i = 0; i < len; i++) {
 		var dataObject = {};
 		dataObject['date'] = greenTrends[i].date;
 		dataObject['greenReqs'] = greenTrends[i].requests;
