@@ -56,6 +56,9 @@
 			<div id="taco" class="pinColumn" onclick="openWindow(this.id);">
 				<p><h3>TacoCorp Reports</h3></p>				
 			</div>
+			<div id="deals" class="pinColumn" onclick="openWindow(this.id);">
+				<p><h3>Deals Dashboard</h3></p>				
+			</div>
 		</div>
 	</div>
 </body>

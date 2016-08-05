@@ -66,7 +66,10 @@
 			<div>
 				<highchart id="theoremChart" config="theoremChart"></highchart>
 			</div>
-
+			<br>
+			<div>
+				<highchart id="theoremChart2" config="theoremChart2"></highchart>
+			</div>
 			<br>
 			<br>
 

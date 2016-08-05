@@ -3,7 +3,14 @@ package model;
 public class GenericObject {
 	private String code;
 	private long z;
+	private String[] values;
 	
+	public String[] getValues() {
+		return values;
+	}
+	public void setValues(String[] values) {
+		this.values = values;
+	}
 	public String getAttribute() {
 		return code;
 	}

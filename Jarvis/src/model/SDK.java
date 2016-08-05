@@ -14,7 +14,14 @@ public class SDK implements Serializable {
 	private float below4_6;
 	private float js;
 	private float win_s2s;
+	private float unknown;
 	
+	public float getUnknown() {
+		return unknown;
+	}
+	public void setUnknown(float unknown) {
+		this.unknown = unknown;
+	}
 	public String getMonth() {
 		return month;
 	}

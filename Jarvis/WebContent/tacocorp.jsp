@@ -74,26 +74,62 @@
 						<div>
 							<highchart id="sdkChart" config="sdkChart"></highchart>
 						</div>
+						<br><br>
+						<div>
+							<highchart id="sdkBreakoutChartTotal" config="sdkBreakoutChartTotal"></highchart>
+						</div>
+						<br><br>
+						<div>
+							<highchart id="sdkBreakoutChartAndroid" config="sdkBreakoutChartAndroid"></highchart>
+						</div>
+						<br><br>
+						<div>
+							<highchart id="sdkBreakoutChartiOS" config="sdkBreakoutChartiOS"></highchart>
+						</div>
 					</div>
 				</div>
 
 				<div id="tab2" class="tab">
-				<div ng-controller="nativeCtrl">
-					<br> <br>
-					<div id="spinner" ng-hide="showNativeData">
+					<div ng-controller="nativeCtrl">
+						<br> <br>
+						<div id="spinner" ng-hide="showNativeData">
 							<img class="spinningwheel" src="images/spinningwheel.gif" />
 						</div>
+
 						<div ng-show="showNativeData">
+							<span class="pageSubHeading">Supply (Last 30 days):<br>
+							<br></span>
 							<highchart id="nativeReqsChart" config="nativeReqsChart"></highchart>
 						</div>
 						<br> <br>
 						<div ng-show="showNativeData">
 							<highchart id="nativeRevChart" config="nativeRevChart"></highchart>
 						</div>
-				</div>
+					</div>
+					<div ng-controller="nativeDemandCtrl">
+						<br> <br>
+						<div id="spinner" ng-hide="showNativeDemandData">
+							<img class="spinningwheel" src="images/spinningwheel.gif" />
+						</div>
+						<span class="pageSubHeading">Demand (Last 30 days):<br>
+						<br></span>
+						<table class="dataTable" ng-show="showNativeDemandData">
+							<tr class="headerRow">
+								<th>Bidder</th>
+								<th>Served</th>
+								<th>Viewed</th>
+								<th>Revenue</th>
+							</tr>
+							<tr ng-repeat="bidder in data">
+								<td>{{ bidder.name }}</td>
+								<td>{{ bidder.served | number:0 }}</td>
+								<td>{{ bidder.viewed | number:0 }}</td>
+								<td>{{ bidder.revenue | currency }}</td>
+						</table>
+					</div>
 				</div>
 				<div id="tab3" class="tab">
-				<!-- <div ng-controller="nativeCtrl">
+					<!-- <div ng-controller="nativeCtrl">
 					<br> <br>
 					<div id="spinner" ng-hide="showNativeData">
 							<img class="spinningwheel" src="images/spinningwheel.gif" />

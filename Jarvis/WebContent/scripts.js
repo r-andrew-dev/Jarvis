@@ -354,6 +354,274 @@ function drawAreaChart(categories, data, yAxisText, title) {
 	return obj;
 }
 
+function drawPieChartAndroidSDK() {
+	var obj = {
+
+			options : {
+				chart : {
+					type : 'pie',
+					width : 1200,
+					height : 600,
+					backgroundColor : 'white'
+				},
+				tooltip : {
+					pointFormat: '<b>{point.percentage:.2f}%</b>'
+				},
+				legend : {
+					enabled : false
+				},
+				plotOptions : {
+					pie : {
+						dataLabels : {
+		                    enabled: true,
+		                    format: '<b>{point.name}</b>',
+		                    style: {
+		                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+		                    }
+						}
+					}
+				}
+			},
+			series : [ {
+				name: name,
+				data : [{
+	                name: '5.0',
+	                y: 45693743
+	            }, {
+	                name: '5.0.1',
+	                y: 220739362
+	            }, {
+	                name: '5.1.0',
+	                y: 291704058
+	            }, {
+	                name: '5.1.1',
+	                y: 214578360
+	            }, {
+	                name: '5.1.2',
+	                y: 2733255
+	            },  {
+	                name: '5.2',
+	                y: 397974435
+	            }, {
+	                name: '5.3',
+	                y: 9444222246
+	            }, {
+	                name: '5.4',
+	                y: 2130203251
+	            }, {
+	                name: '6.0',
+	                y: 1111900377
+	            }, {
+	                name: '6.1',
+	                y: 11701894267
+	            }, {
+	                name: '6.2',
+	                y: 98154073
+	            },{
+	                name: '6.3',
+	                y: 60961694,
+	                sliced: true,
+	                selected: true
+	            }]
+			} ],
+			title : {
+				text : 'Android SDK Adoption by Version'
+			},
+			loading : false
+	}
+	
+	return obj;
+}
+
+function drawPieChartiOSSDK() {
+	var obj = {
+
+			options : {
+				chart : {
+					type : 'pie',
+					width : 1200,
+					height : 600,
+					backgroundColor : 'white'
+				},
+				tooltip : {
+					pointFormat: '<b>{point.percentage:.2f}%</b>'
+				},
+				legend : {
+					enabled : false
+				},
+				plotOptions : {
+					pie : {
+						dataLabels : {
+		                    enabled: true,
+		                    format: '<b>{point.name}</b>',
+		                    style: {
+		                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+		                    }
+						}
+					}
+				}
+			},
+			series : [ {
+				name: name,
+				data : [{
+	                name: '5.0',
+	                y: 7566973
+	            }, {
+	                name: '5.0.1',
+	                y: 17633521
+	            }, {
+	                name: '5.1.0',
+	                y: 15984003
+	            }, {
+	                name: '5.1.1',
+	                y: 182231772
+	            }, {
+	                name: '5.1.2',
+	                y: 5
+	            },  {
+	                name: '5.2',
+	                y: 820738230
+	            }, {
+	                name: '5.3',
+	                y: 191486287
+	            }, {
+	                name: '5.3.1',
+	                y: 10324903
+	            }, {
+	                name: '5.4',
+	                y: 52200955
+	            }, {
+	                name: '5.4.1',
+	                y: 2173729314
+	            }, {
+	                name: '5.5',
+	                y: 386842
+	            }, {
+	                name: '6.0',
+	                y: 456
+	            }, {
+	                name: '6.0.1',
+	                y: 193592480
+	            }, {
+	                name: '6.1',
+	                y: 11282811769
+	            }, {
+	                name: '6.1.1',
+	                y: 151961118
+	            }, {
+	                name: '6.2',
+	                y: 351897628
+	            },{
+	                name: '6.3',
+	                y: 57767,
+	                sliced: true,
+	                selected: true
+	            }]
+			} ],
+			title : {
+				text : 'iOS SDK Adoption by Version'
+			},
+			loading : false
+	}
+	
+	return obj;
+}
+
+
+function drawPieChartTotalSDK() {
+	var obj = {
+
+			options : {
+				chart : {
+					type : 'pie',
+					width : 1200,
+					height : 600,
+					backgroundColor : 'white'
+				},
+				tooltip : {
+					pointFormat: '<b>{point.percentage:.2f}%</b>'
+				},
+				legend : {
+					enabled : false
+				},
+				plotOptions : {
+					pie : {
+						dataLabels : {
+		                    enabled: true,
+		                    format: '<b>{point.name}</b>',
+		                    style: {
+		                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+		                    }
+						}
+					}
+				}
+			},
+			series : [ {
+				name: name,
+				data : [{
+	                name: '5.0',
+	                y: 7566973+45693743
+	            }, {
+	                name: '5.0.1',
+	                y: 17633521+220739362
+	            }, {
+	                name: '5.1.0',
+	                y: 15984003+291704058
+	            }, {
+	                name: '5.1.1',
+	                y: 182231772+214578360
+	            }, {
+	                name: '5.1.2',
+	                y: 5+2733255
+	            },  {
+	                name: '5.2',
+	                y: 820738230+397974435
+	            }, {
+	                name: '5.3',
+	                y: 191486287+9444222246
+	            }, {
+	                name: '5.3.1',
+	                y: 10324903
+	            }, {
+	                name: '5.4',
+	                y: 52200955+2130203251
+	            }, {
+	                name: '5.4.1',
+	                y: 2173729314
+	            }, {
+	                name: '5.5',
+	                y: 386842
+	            }, {
+	                name: '6.0',
+	                y: 456+1111900377
+	            }, {
+	                name: '6.0.1',
+	                y: 193592480
+	            }, {
+	                name: '6.1',
+	                y: 11282811769+11701894267
+	            }, {
+	                name: '6.1.1',
+	                y: 151961118
+	            }, {
+	                name: '6.2',
+	                y: 351897628+98154073
+	            },{
+	                name: '6.3',
+	                y: 57767+60961694,
+	                sliced: true,
+	                selected: true
+	            }]
+			} ],
+			title : {
+				text : 'Total SDK Adoption by Version'
+			},
+			loading : false
+	}
+	
+	return obj;
+}
+
 function drawMap(countryReqs, container, dataClass) {
 
 	        var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);

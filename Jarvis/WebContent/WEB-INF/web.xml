@@ -80,6 +80,14 @@
     <servlet-name>nativeController</servlet-name>
     <servlet-class>controller.NativeController</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>mobDealController</servlet-name>
+    <servlet-class>controller.MobDealController</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>nativeDemandController</servlet-name>
+    <servlet-class>controller.NativeDemandController</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>javaAngularJS</servlet-name>
     <url-pattern>/javaAngularJS</url-pattern>
@@ -151,5 +159,13 @@
   <servlet-mapping>
     <servlet-name>nativeController</servlet-name>
     <url-pattern>/nativeController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>mobDealController</servlet-name>
+    <url-pattern>/mobDealController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>nativeDemandController</servlet-name>
+    <url-pattern>/nativeDemandController</url-pattern>
   </servlet-mapping>
 </web-app>

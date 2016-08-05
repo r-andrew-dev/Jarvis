@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import model.Account;
 import model.AdQuality;
+import model.Bidder;
 import model.Daily;
 import model.Exchange;
 import model.GenericObject;
@@ -3023,15 +3024,15 @@ public class DataAccess {
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<AdQuality> biddersList = new ArrayList<AdQuality>();
-		String query = "select v.date, v.count, u.count "
+		String query = "select v.date, v.count, u.count, v.seen, u.seen "
 						+"from "
-						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
 						+"from core.company c, core.creative_verification cv "
 						+"where c.name = '"+bidder+"' "
 						+"and cv.buyer_pid = c.pid "
 						+"and cv.status = 1 "
 						+"group by 1) v left outer join "
-						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
 						+"from core.company c, core.creative_verification cv "
 						+"where c.name = '"+bidder+"' "
 						+"and cv.buyer_pid = c.pid "
@@ -3051,6 +3052,8 @@ public class DataAccess {
 				aq.setDate(rs.getString(1));
 				aq.setVerified(rs.getInt(2));
 				aq.setUnverified(rs.getInt(3));
+				aq.setVerifiedSeen(rs.getInt(4));
+				aq.setUnverifiedSeen(rs.getInt(5));
 				biddersList.add(aq);
 			}
 
@@ -3091,14 +3094,14 @@ public class DataAccess {
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Daily> dailyData = new ArrayList<Daily>();
-		String query = "select v.date, v.count, u.count "
+		String query = "select v.date, v.count, u.count, v.seen, u.seen "
 						+"from "
-						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
 						+"from core.creative_verification cv "
 						+"where date(cv.last_update) >= date_sub(curdate(), interval 30 day) "
 						+"and cv.status = 1 "
 						+"group by 1) v, "
-						+"(select date(cv.last_update) date, count(cv.status) count "
+						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
 						+"from core.creative_verification cv "
 						+"where date(cv.last_update) >= date_sub(curdate(), interval 30 day) "
 						+"and cv.status = 2 "
@@ -3117,6 +3120,8 @@ public class DataAccess {
 				d.setDate(rs.getString(1));
 				d.setVerified(rs.getInt(2));
 				d.setUnverified(rs.getInt(3));
+				d.setVerifiedSeen(rs.getInt(4));
+				d.setUnverifiedSeen(rs.getInt(5));
 				dailyData.add(d);
 			}
 
@@ -3157,14 +3162,14 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Daily> dailyData = new ArrayList<Daily>();
 		String query = "select DATE(a11.start) NX_FACTREVENUEADNETDATE, "
-				+ "sum(a11.ads_requested_site) NXINBOUNDREQUESTS, sum(a11.revenue) NXREVENUE "
-+"from datawarehouse.fact_revenue_adnet a11 join datawarehouse.dim_position a12 "
-+ "on (a11.site_id = a12.site_id and a11.zone = a12.name) "
-+"where a12.video_support in (3) "
-+"and DATE(a11.start) >= date_sub(curdate(), interval 30 day) "
-+"and a11.tag_monetization in (-1, 1) "
-+"group by 1 "
-+"order by 1";
+						+ "sum(a11.ads_requested_site) NXINBOUNDREQUESTS, sum(a11.revenue) NXREVENUE "
+						+"from datawarehouse.fact_revenue_adnet a11 join datawarehouse.dim_position a12 "
+						+ "on (a11.site_id = a12.site_id and a11.zone = a12.name) "
+						+"where a12.video_support in (3) "
+						+"and DATE(a11.start) >= date_sub(curdate(), interval 30 day) "
+						+"and a11.tag_monetization in (-1, 1) "
+						+"group by 1 "
+						+"order by 1";
 
 		try {
 
@@ -3210,6 +3215,68 @@ public class DataAccess {
 		}
 
 		return dailyData;
+
+	}
+	
+	public List<Bidder> getNativeDemandData() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<Bidder> bidders = new ArrayList<Bidder>();
+		String query = "select b.name, sum(f.ads_served) NXRTBSERVED, sum(f.ads_delivered) NXRTBVIEWS, sum(f.revenue) NXRTBREVENUE "
++"from datawarehouse.fact_exchange_wins	f "
++"join datawarehouse.dim_position	p "
++"on (f.site_id = p.site_id and f.zone = p.name) "
++"join dim_bidder	b "
++"on (f.bidder_id = b.id) "
++"where (p.video_support in (3) "
++"and DATE(f.start) >=  date_sub(curdate(), interval 30 day)) "
++"group by 1 "
++"order by 4 desc";
+
+		try {
+
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				Bidder b = new Bidder();
+				b.setName(rs.getString(1));
+				b.setServed(rs.getInt(2));
+				b.setViewed(rs.getInt(3));
+				b.setRevenue(rs.getFloat(4));
+				bidders.add(b);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return bidders;
 
 	}
 	
@@ -3596,6 +3663,206 @@ public class DataAccess {
 		}
 
 		return siteValues;
+
+	}
+	
+	public List<GenericObject> getRequests() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select vid.country, fsi.reqs, vid.reqs "
+						+"from "
+						+"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
+						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
+						+"where c.name = 'Mobilityware' "
+						+"and s.company_id = c.id "
+						+"and f.site_id = s.id "
+						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
+						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+						+"and f.zone like '%video%' "
+						+"group by 1) vid left outer join  "
+						+"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
+						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
+						+"where c.name = 'Mobilityware' "
+						+"and s.company_id = c.id "
+						+"and f.site_id = s.id "
+						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
+						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+						+"and f.zone like '%interstitial%' "
+						+"group by 1) fsi on vid.country = fsi.country";
+		
+		List<GenericObject> countryReqs = new ArrayList<GenericObject>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				GenericObject o = new GenericObject();
+				String[] reqs = new String[4];
+				o.setAttribute(rs.getString(1));
+				reqs[0] = rs.getString(2);
+				reqs[1] = rs.getString(3);
+				o.setValues(reqs);
+				if(o.getAttribute().equals("USA")) {
+					reqs[2] = "7500000";
+					reqs[3] = "22500000";
+				} else if(o.getAttribute().equals("GBR")) {
+					reqs[2] = "6000000";
+					reqs[3] = "12000000";
+				} else if(o.getAttribute().equals("CAN")) {
+					reqs[2] = "6000000";
+					reqs[3] = "12000000";
+				} else if(o.getAttribute().equals("DEU")) {
+					reqs[2] = "3000000";
+					reqs[3] = "9000000";
+				} else if(o.getAttribute().equals("FRA")) {
+					reqs[2] = "3000000";
+					reqs[3] = "9000000";
+				} else if(o.getAttribute().equals("AUS")) {
+					reqs[2] = "1500000";
+					reqs[3] = "4500000";
+				} else if(o.getAttribute().equals("JPN")) {
+					reqs[2] = "1500000";
+					reqs[3] = "4500000";
+				}
+				countryReqs.add(o);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return countryReqs;
+
+	}
+	
+	public List<GenericObject> getEcpm() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select vid.country, vid.ecpm, vid.pubecpm, fsi.ecpm, fsi.pubecpm "
+						+"from "
+						+"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
+						+"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
+						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_exchange_wins f "
+						+"where c.name = 'Mobilityware' "
+						+"and s.company_id = c.id "
+						+"and f.site_id = s.id "
+						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
+						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+						+"and f.zone like '%video%' "
+						+"group by 1) vid left outer join  "
+						+"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
+						+"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
+						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_exchange_wins f "
+						+"where c.name = 'Mobilityware' "
+						+"and s.company_id = c.id "
+						+"and f.site_id = s.id "
+						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
+						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+						+"and f.zone like '%interstitial%' "
+						+"group by 1) fsi on vid.country = fsi.country";
+		
+		List<GenericObject> countryReqs = new ArrayList<GenericObject>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				GenericObject o = new GenericObject();
+				String[] ecpm = new String[6];
+				o.setAttribute(rs.getString(1));
+				ecpm[0] = rs.getString(2);
+				ecpm[1] = rs.getString(3);
+				ecpm[2] = rs.getString(4);
+				ecpm[3] = rs.getString(5);
+				if(o.getAttribute().equals("USA")) {
+					ecpm[4] = "7.50";
+					ecpm[5] = "5.00";
+				} else if(o.getAttribute().equals("GBR")) {
+					ecpm[4] = "7.50";
+					ecpm[5] = "5.00";
+				} else if(o.getAttribute().equals("CAN")) {
+					ecpm[4] = "7.50";
+					ecpm[5] = "5.00";
+				} else if(o.getAttribute().equals("DEU")) {
+					ecpm[4] = "7.50";
+					ecpm[5] = "4.00";
+				} else if(o.getAttribute().equals("FRA")) {
+					ecpm[4] = "7.50";
+					ecpm[5] = "4.00";
+				} else if(o.getAttribute().equals("AUS")) {
+					ecpm[4] = "7.50";
+					ecpm[5] = "4.00";
+				} else if(o.getAttribute().equals("JPN")) {
+					ecpm[4] = "7.50";
+					ecpm[5] = "4.00";
+				}
+				o.setValues(ecpm);
+				countryReqs.add(o);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return countryReqs;
 
 	}
 

@@ -2565,6 +2565,7 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 		var below4_6DataObject = {};
 		var jsDataObject = {};
 		var win_s2sDataObject = {};
+		var unknownDataObject = {};
 
 		ios6DataObject['name'] = 'iOS 6.0';
 		android6DataObject['name'] = 'Android 6.0';
@@ -2573,6 +2574,7 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 		below4_6DataObject['name'] = '4.6 and below';
 		jsDataObject['name'] = 'JS Tag';
 		win_s2sDataObject['name'] = 'Windows and S2S';
+		unknownDataObject['name'] = 'Unknown';
 
 		var ios6Values = [];
 		var android6Values = [];
@@ -2581,6 +2583,7 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 		var below4_6Values = [];
 		var jsValues = [];
 		var win_s2sValues = [];
+		var unknownValues = [];
 
 		for (var i = 0; i < Object
 				.keys(data).length; i++) {
@@ -2600,6 +2603,8 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 					.push(data[i].js);
 			win_s2sValues
 					.push(data[i].win_s2s);
+			unknownValues
+			.push(data[i].unknown);
 
 		}
 		ios6DataObject['data'] = ios6Values;
@@ -2609,6 +2614,7 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 		below4_6DataObject['data'] = below4_6Values;
 		jsDataObject['data'] = jsValues;
 		win_s2sDataObject['data'] = win_s2sValues;
+		unknownDataObject['data'] = unknownValues;
 
 		trendsData
 				.push(ios6DataObject);
@@ -2624,6 +2630,8 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 				.push(jsDataObject);
 		trendsData
 				.push(win_s2sDataObject);
+		trendsData
+		.push(unknownDataObject);
 
 		$scope.sdkChart = drawStackedColumnChartWide(
 				categories, trendsData,
@@ -2634,6 +2642,10 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
+	
+	$scope.sdkBreakoutChartAndroid = drawPieChartAndroidSDK();
+	$scope.sdkBreakoutChartiOS = drawPieChartiOSSDK();
+	$scope.sdkBreakoutChartTotal = drawPieChartTotalSDK();
 
 });
 
@@ -2700,6 +2712,29 @@ sdkApp.controller('nativeCtrl', function($scope, $http) {
 
 });
 
+sdkApp.controller('nativeDemandCtrl', function($scope, $http, $location) {
+
+	$scope.showNativeDemandData = false;
+	
+	if ($location.absUrl().indexOf('localhost') > -1)
+		path = 'local';
+	else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+		path = 'mac';
+	else
+		path = 'remote';
+
+	$http({
+		method : "GET",
+		url : "nativeDemandController?path="+path
+	}).then(function mySuccess(response) {
+		$scope.data = response.data;
+		$scope.showNativeDemandData = true;
+	}, function myError(response) {
+		$scope.data = response.statusText;
+	});
+
+});
+
 adqualityApp.controller('adqualityCtrl', function($scope, $http) {
 
 	$scope.showData = false;
@@ -2722,15 +2757,22 @@ adqualityApp.controller('adqualityCtrl', function($scope, $http) {
 		
 		var categories = [];
 		var data = [];
+		var data2 = [];
 
 		var verifiedDataObject = {};
 		var unverifiedDataObject = {};
+		var verifiedSeenDataObject = {};
+		var unverifiedSeenDataObject = {};
 
 		verifiedDataObject['name'] = 'Verified';
 		unverifiedDataObject['name'] = 'Unverifiable';
+		verifiedSeenDataObject['name'] = 'Verified Seen Count';
+		unverifiedSeenDataObject['name'] = 'Unverified Seen Count';
 
 		var verifiedValues = [];
 		var unverifiedValues = [];
+		var verifiedSeenValues = [];
+		var unverifiedSeenValues = [];
 		
 		for (var i = 0; i < Object
 				.keys(trends).length; i++) {
@@ -2740,22 +2782,34 @@ adqualityApp.controller('adqualityCtrl', function($scope, $http) {
 					.push(trends[i].verified);
 			unverifiedValues
 					.push(trends[i].unverified);
+			verifiedSeenValues
+					.push(trends[i].verifiedSeen);
+			unverifiedSeenValues
+					.push(trends[i].unverifiedSeen);
 			
 		}
 
 		verifiedDataObject['data'] = verifiedValues;
 		unverifiedDataObject['data'] = unverifiedValues;
-
+		verifiedSeenDataObject['data'] = verifiedSeenValues;
+		unverifiedSeenDataObject['data'] = unverifiedSeenValues;
 
 		data.push(verifiedDataObject);
 		data.push(unverifiedDataObject);
-
+		data2.push(verifiedSeenDataObject);
+		data2.push(unverifiedSeenDataObject);
 
 		$scope.theoremChart = drawLineChartWide(
 				categories,
 				data,
 				'Values',
 				'Daily Verified vs Unverifiable', 1);
+		
+		$scope.theoremChart2 = drawLineChartWide(
+				categories,
+				data2,
+				'Values',
+				'Daily Verified vs Unverifiable Seen Count', 1);
 		
 		$scope.showData = true;
 		
@@ -2798,15 +2852,22 @@ adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http, $lo
 		
 		var categories = [];
 		var data = [];
+		var data2 = [];
 
 		var verifiedDataObject = {};
 		var unverifiedDataObject = {};
+		var verifiedSeenDataObject = {};
+		var unverifiedSeenDataObject = {};
 
 		verifiedDataObject['name'] = 'Verified';
 		unverifiedDataObject['name'] = 'Unverifiable';
+		verifiedSeenDataObject['name'] = 'Verified Seen Count';
+		unverifiedSeenDataObject['name'] = 'Unverifiable Seen Count';
 
 		var verifiedValues = [];
 		var unverifiedValues = [];
+		var verifiedSeenValues = [];
+		var unverifiedSeenValues = [];
 		
 		for (var i = 0; i < Object
 				.keys(trends).length; i++) {
@@ -2816,15 +2877,23 @@ adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http, $lo
 					.push(trends[i].verified);
 			unverifiedValues
 					.push(trends[i].unverified);
+			verifiedSeenValues
+					.push(trends[i].verifiedSeen);
+			unverifiedSeenValues
+					.push(trends[i].unverifiedSeen);
 			
 		}
 
 		verifiedDataObject['data'] = verifiedValues;
 		unverifiedDataObject['data'] = unverifiedValues;
+		verifiedSeenDataObject['data'] = verifiedSeenValues;
+		unverifiedSeenDataObject['data'] = unverifiedSeenValues;
 
 
 		data.push(verifiedDataObject);
 		data.push(unverifiedDataObject);
+		data2.push(verifiedSeenDataObject);
+		data2.push(unverifiedSeenDataObject);
 
 
 		$scope.theoremChart = drawLineChartWide(
@@ -2832,6 +2901,11 @@ adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http, $lo
 				data,
 				'Values',
 				'Daily Verified vs Unverifiable', 0);
+		$scope.theoremChart2 = drawLineChartWide(
+				categories,
+				data2,
+				'Values',
+				'Daily Verified vs Unverifiable Seen Count', 0);
 
 		$scope.showData = true;
 	}, function myError(response) {
@@ -2843,6 +2917,31 @@ adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http, $lo
 				: false;
 		$scope.predicate = predicate;
 	};
+});
+
+mobDealApp.controller('mobDealCtrl', function($scope, $http, $location) {
+	$scope.showReqs = false;
+	$scope.showEcpm = false;
+	
+	$http({
+		method : "GET",
+		url : "mobDealController?type=reqs"
+	}).then(function mySuccess(response) {
+		$scope.reqsData = response.data;
+		$scope.showReqs = true;
+	}, function myError(response) {
+		$scope.reqsData = response.statusText;
+	});
+	
+	$http({
+		method : "GET",
+		url : "mobDealController?type=ecpm"
+	}).then(function mySuccess(response) {
+		$scope.ecpmData = response.data;
+		$scope.showEcpm = true;
+	}, function myError(response) {
+		$scope.reqsData = response.statusText;
+	});
 });
 
 

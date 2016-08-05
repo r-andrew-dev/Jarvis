@@ -17,6 +17,7 @@ var viewabilityApp = angular.module('viewabilityApp', ["highcharts-ng","ngAnimat
 var sdkApp = angular.module('sdkApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
 var adqualityApp = angular.module('adqualityApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
 var adqualityBidderApp = angular.module('adqualityBidderApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
+var mobDealApp = angular.module('mobDealApp', ["highcharts-ng","ngAnimate","ui.bootstrap"]);
 
 
 

@@ -11,6 +11,24 @@ public class AdQuality implements Serializable {
 	private int verified;
 	private int unverified;
 	private String date;
+	private int verifiedSeen;
+	private int unverifiedSeen;
+
+	public int getVerifiedSeen() {
+		return verifiedSeen;
+	}
+
+	public void setVerifiedSeen(int verifiedSeen) {
+		this.verifiedSeen = verifiedSeen;
+	}
+
+	public int getUnverifiedSeen() {
+		return unverifiedSeen;
+	}
+
+	public void setUnverifiedSeen(int unverifiedSeen) {
+		this.unverifiedSeen = unverifiedSeen;
+	}
 
 	public String getDate() {
 		return date;

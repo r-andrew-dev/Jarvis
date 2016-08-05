@@ -74,7 +74,10 @@
 			<div>
 				<highchart id="theoremChart" config="theoremChart"></highchart>
 			</div>
-
+			<br>
+			<div>
+				<highchart id="theoremChart2" config="theoremChart2"></highchart>
+			</div>
 			<br>
 			<table class="dataTable" style="width: 100%;"
 				ng-init="predicate = 'date'; reverse = false;">

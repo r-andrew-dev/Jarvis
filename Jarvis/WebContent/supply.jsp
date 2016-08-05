@@ -137,7 +137,7 @@
 								<tr>
 									<td>
 									<table class="dataTable" style="width: 100%;" ng-show="placement.showChart">
-									<tr class="headerRow"><td>Country</td><td>Green Requests</td></tr>
+									<tr class="headerRow"><th>Country</th><th>Green Requests</th></tr>
 									<tr ng-repeat="country in placement.greenCountryReqs">
 										<td>{{ country.code }}</td>
 										<td>{{ country.z | number:0 }}</td>
@@ -146,7 +146,7 @@
 									</td>
 									<td>
 									<table class="dataTable" style="width: 100%;" ng-show="placement.showChart">
-									<tr class="headerRow"><td>Country</td><td>Nexage Requests</td></tr>
+									<tr class="headerRow"><th>Country</th><th>Nexage Requests</th></tr>
 									<tr ng-repeat="country in placement.nexCountryReqs">
 										<td>{{ country.code }}</td>
 										<td>{{ country.z | number:0 }}</td>

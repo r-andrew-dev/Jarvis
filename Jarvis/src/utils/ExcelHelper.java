@@ -17,6 +17,7 @@ import java.util.Set;
 import com.opencsv.CSVReader;
 
 import data.DataAccess;
+import model.Bidder;
 import model.Exchange;
 import model.PubChurn;
 import model.PublisherAccount;
@@ -88,6 +89,24 @@ public class ExcelHelper {
 		return exchanges;
 	}
 	
+	public List<Bidder> readNativeBidders() throws IOException {
+		CSVReader reader = new CSVReader(new FileReader(path + "Native_Bidders.csv"));
+		List<Bidder> bidders = new ArrayList<Bidder>();
+		String[] nextLine = reader.readNext();
+		while ((nextLine = reader.readNext()) != null) {
+			Bidder b = new Bidder();
+			b.setName(nextLine[0]);
+			b.setServed(Integer.parseInt(nextLine[1]));
+			b.setViewed(Integer.parseInt(nextLine[2]));
+			b.setRevenue(Float.parseFloat(nextLine[3]));
+			bidders.add(b);
+		}
+
+		reader.close();
+
+		return bidders;
+	}
+	
 	public Map<String, String> readPubAMs() throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(path + "pub_ams.csv"));
 		Map<String, String> ams = new HashMap<String, String>();
@@ -113,6 +132,7 @@ public class ExcelHelper {
 			sdk.setBelow4_6(Float.parseFloat(nextLine[5]));
 			sdk.setJs(Float.parseFloat(nextLine[6]));
 			sdk.setWin_s2s(Float.parseFloat(nextLine[7]));
+			sdk.setUnknown(Float.parseFloat(nextLine[8]));
 			data.add(sdk);
 		}
 		reader.close();
