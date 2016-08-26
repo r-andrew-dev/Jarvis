@@ -855,28 +855,27 @@ supplyApp
 														ecpmTrendsData, 'eCPM',
 														'eCPM Last 7 Days');
 												placement.showChart = true;
-												
+
 											}
 										},
 										function myError(response) {
 											$scope.siteData = response.statusText;
 										});
 					}
-					
+
 					$scope.showData = function() {
 
-						var modalInstance = $uibModal
-								.open({
-									animation : $scope.animationsEnabled,
-									templateUrl : 'supplyModalContent.html',
-									controller : 'ModalInstanceCtrl',
-									size : 'lg',
-									resolve : {
-										data : function() {
-											return $scope.rawData;
-										}
-									}
-								});
+						var modalInstance = $uibModal.open({
+							animation : $scope.animationsEnabled,
+							templateUrl : 'supplyModalContent.html',
+							controller : 'ModalInstanceCtrl',
+							size : 'lg',
+							resolve : {
+								data : function() {
+									return $scope.rawData;
+								}
+							}
+						});
 
 						modalInstance.result.then(function(selectedItem) {
 							$scope.selected = selectedItem;
@@ -885,58 +884,68 @@ supplyApp
 						});
 
 					};
-					
+
 					$scope.exportData = function() {
-					        var blob = new Blob([document.getElementById('exportable').innerHTML], {
-					            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-					        });
-					        saveAs(blob, "data.xls");
-				    };
-					
-					
+						var blob = new Blob(
+								[ document.getElementById('exportable').innerHTML ],
+								{
+									type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+								});
+						saveAs(blob, "data.xls");
+					};
+
 				});
 
-supplyApp.controller('ModalInstanceCtrl', function($scope,
-		$uibModalInstance, data) {
+supplyApp
+		.controller(
+				'ModalInstanceCtrl',
+				function($scope, $uibModalInstance, data) {
 
-	$scope.showTable = false;
-	var rawData = [];
-	var greenTrends = data.greenTrends;
-	var nexTrends = data.nexTrends;
-	var len = 0;
-	if(Object.keys(greenTrends).length < Object.keys(nexTrends).length)
-		len = Object.keys(greenTrends).length;
-	else
-		len = Object.keys(nexTrends).length;
-	
-	for (var i = 0; i < len; i++) {
-		var dataObject = {};
-		dataObject['date'] = greenTrends[i].date;
-		dataObject['greenReqs'] = greenTrends[i].requests;
-		dataObject['greenEcpm'] = greenTrends[i].spend/greenTrends[i].impressions*1000;
-		dataObject['nexReqs'] = nexTrends[i].requests;
-		dataObject['nexEcpm'] = nexTrends[i].spend/nexTrends[i].impressions*1000;
-		rawData.push(dataObject);
-	}
-	var obj = {trends:rawData};
-	$scope.data = obj;
-	$scope.showTable = true;
+					$scope.showTable = false;
+					var rawData = [];
+					var greenTrends = data.greenTrends;
+					var nexTrends = data.nexTrends;
+					var len = 0;
+					if (Object.keys(greenTrends).length < Object
+							.keys(nexTrends).length)
+						len = Object.keys(greenTrends).length;
+					else
+						len = Object.keys(nexTrends).length;
 
-	$scope.ok = function() {
-		$uibModalInstance.close();
-	};
+					for (var i = 0; i < len; i++) {
+						var dataObject = {};
+						dataObject['date'] = greenTrends[i].date;
+						dataObject['greenReqs'] = greenTrends[i].requests;
+						dataObject['greenEcpm'] = greenTrends[i].spend
+								/ greenTrends[i].impressions * 1000;
+						dataObject['nexReqs'] = nexTrends[i].requests;
+						dataObject['nexEcpm'] = nexTrends[i].spend
+								/ nexTrends[i].impressions * 1000;
+						rawData.push(dataObject);
+					}
+					var obj = {
+						trends : rawData
+					};
+					$scope.data = obj;
+					$scope.showTable = true;
 
-	$scope.cancel = function() {
-		$uibModalInstance.dismiss('cancel');
-	};
-	
-	$scope.exportData = function() {
-        var blob = new Blob([document.getElementById('exportable').innerHTML], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-        });
-        saveAs(blob, "data.xls");
-};
-});
+					$scope.ok = function() {
+						$uibModalInstance.close();
+					};
+
+					$scope.cancel = function() {
+						$uibModalInstance.dismiss('cancel');
+					};
+
+					$scope.exportData = function() {
+						var blob = new Blob(
+								[ document.getElementById('exportable').innerHTML ],
+								{
+									type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+								});
+						saveAs(blob, "data.xls");
+					};
+				});
 
 auctionsApp
 		.controller(
@@ -1067,13 +1076,15 @@ tagAuctionsApp
 																	categories,
 																	requestsData,
 																	'Values',
-																	'Requests vs Auctions vs Ads Served', 48);
+																	'Requests vs Auctions vs Ads Served',
+																	48);
 
 															$scope.revChart = drawLineChartWide(
 																	categories,
 																	costsData,
 																	'$',
-																	'Net Revenue vs Costs', 48);
+																	'Net Revenue vs Costs',
+																	48);
 
 															var countryReqs = response.data.countryReqs;
 															var carrierReqs = response.data.carrierReqs;
@@ -1245,14 +1256,20 @@ churnApp
 					$scope.hideRevLoading = false;
 					$scope.hideNexRevLoading = false;
 					$scope.animationsEnabled = true;
-					
-					$scope.myStyle= function(value){
-						if(value > 90)
-							return {background: 'red'};
-						else if(value <= 90 && value > 75)
-							return {background: 'orange'};
+
+					$scope.myStyle = function(value) {
+						if (value > 90)
+							return {
+								background : 'red'
+							};
+						else if (value <= 90 && value > 75)
+							return {
+								background : 'orange'
+							};
 						else
-							return {background: 'green'};
+							return {
+								background : 'green'
+							};
 					}
 
 					$scope.showData = function(category, month, title,
@@ -1426,7 +1443,7 @@ churnApp
 										var y2m12Values = [];
 										for (var i = 0; i < Object.keys(data).length; i++) {
 											var cat = data[i].year + "-"
-											+ data[i].month;
+													+ data[i].month;
 											categories.push(cat);
 											oldValues.push(data[i].oldRequests);
 											y1m1Values
@@ -1665,12 +1682,11 @@ churnApp
 										var y2m10Values = [];
 										var y2m11Values = [];
 										var y2m12Values = [];
-										
 
-										$scope.mydasRisk = data[Object.keys(data).length-1].risk;
+										$scope.mydasRisk = data[Object
+												.keys(data).length - 1].risk;
 
-										
-										for (var i = 0; i < Object.keys(data).length-1; i++) {
+										for (var i = 0; i < Object.keys(data).length - 1; i++) {
 											categories.push(data[i].year + "-"
 													+ data[i].month);
 											oldValues.push(data[i].oldrevenue);
@@ -1910,10 +1926,10 @@ churnApp
 										var y2m10Values = [];
 										var y2m11Values = [];
 										var y2m12Values = [];
-										
-										$scope.nexRisk = data[Object.keys(data).length-1].risk;
-										
-										for (var i = 0; i < Object.keys(data).length-1; i++) {
+
+										$scope.nexRisk = data[Object.keys(data).length - 1].risk;
+
+										for (var i = 0; i < Object.keys(data).length - 1; i++) {
 											categories.push(data[i].year + "-"
 													+ data[i].month);
 											oldValues.push(data[i].oldrevenue);
@@ -2288,7 +2304,7 @@ churnApp.controller('ModalInstanceCtrl', function($scope, $http,
 	$scope.month = month;
 	$scope.type = type;
 	$scope.showTable = false;
-	if(type.indexOf("reqs") > -1)
+	if (type.indexOf("reqs") > -1)
 		$scope.reqs = true;
 	else
 		$scope.reqs = false;
@@ -2317,7 +2333,7 @@ churnApp.controller('ModalInstanceCtrl', function($scope, $http,
 ooApp.controller('ooCtrl', function($scope, $http) {
 	$scope.showTable = false;
 	$scope.type = 'Current Month'
-	
+
 	$http({
 		method : "GET",
 		url : "ooController?type=mtd"
@@ -2327,7 +2343,7 @@ ooApp.controller('ooCtrl', function($scope, $http) {
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
-	
+
 	$scope.getLastMonth = function() {
 		$scope.showTable = false;
 		$http({
@@ -2356,11 +2372,11 @@ ooSiteApp.config(function($locationProvider) {
 ooSiteApp.controller('ooSiteCtrl', function($scope, $http, $location) {
 	$scope.showSiteTable = false;
 	var id = $location.search().siteId;
-	
+
 	$scope.showTags = function() {
-		window.location.href = 'ownedTag.jsp?siteId='+id;
+		window.location.href = 'ownedTag.jsp?siteId=' + id;
 	};
-	
+
 	$http({
 		method : "GET",
 		url : "ooController?type=site&id=" + id
@@ -2380,24 +2396,24 @@ ooSiteApp.filter('percentage', [ '$filter', function($filter) {
 
 ooTagApp.config(function($locationProvider) {
 	$locationProvider.html5Mode({
-		  enabled: true,
-		  requireBase: false
-		});
+		enabled : true,
+		requireBase : false
+	});
 });
 
 ooTagApp.controller('ooTagCtrl', function($scope, $http, $location) {
 	$scope.showTable = false;
 	var id = $location.search().siteId;
-	
+
 	$scope.site = id;
-	
+
 	$scope.showTagDaily = function(tagId) {
-		window.location.href = 'ownedTagDaily.jsp?tagId='+tagId;
+		window.location.href = 'ownedTagDaily.jsp?tagId=' + tagId;
 	};
-	
+
 	$http({
 		method : "GET",
-		url : "ooController?type=tagmtd&id="+id
+		url : "ooController?type=tagmtd&id=" + id
 	}).then(function mySuccess(response) {
 		$scope.data = response.data;
 		$scope.showTable = true;
@@ -2451,7 +2467,7 @@ newTagsApp.controller('newTagsCtrl', function($scope, $http) {
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
-	
+
 	$scope.order = function(predicate) {
 		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
 				: false;
@@ -2472,7 +2488,7 @@ tierOptApp.controller('tierOptCtrl', function($scope, $http) {
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
-	
+
 	$scope.order = function(predicate) {
 		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
 				: false;
@@ -2480,57 +2496,68 @@ tierOptApp.controller('tierOptCtrl', function($scope, $http) {
 	};
 });
 
-viewabilityApp.controller('viewabilityCtrl', function($scope, $http, $location) {
+viewabilityApp
+		.controller(
+				'viewabilityCtrl',
+				function($scope, $http, $location) {
 
-	$scope.showData = false;
-	
-	if ($location.absUrl().indexOf('localhost') > -1)
-		path = 'local';
-	else if ($location.absUrl().indexOf('10.172.98.67') > -1)
-		path = 'mac';
-	else
-		path = 'remote';
+					$scope.showData = false;
 
-	$http({
-		method : "GET",
-		url : "viewabilityController?path="+path
-	}).then(function mySuccess(response) {
-		$scope.data = response.data;
-		$scope.showData = true;
-	}, function myError(response) {
-		$scope.sites = response.statusText;
-	});
-	
-	$scope.exportData = function(type) {
-		if(type == 'IASexch') {
-	        var blob = new Blob([document.getElementById('exportable1').innerHTML], {
-	            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-	        });
-	        saveAs(blob, "IAS_Exchange.xls");
-		} else if(type == 'MOATexch') {
-			var blob = new Blob([document.getElementById('exportable2').innerHTML], {
-	            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-	        });
-	        saveAs(blob, "MOAT_Exchange.xls");
-		} else if(type == 'IASNet') {
-			var blob = new Blob([document.getElementById('exportable3').innerHTML], {
-	            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-	        });
-	        saveAs(blob, "IAS_Network.xls");
-		} else if(type == 'MOATnet') {
-			var blob = new Blob([document.getElementById('exportable4').innerHTML], {
-	            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-	        });
-	        saveAs(blob, "MOAT_Network.xls");
-		}
-    };
-	
-	$scope.order = function(predicate) {
-		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
-				: false;
-		$scope.predicate = predicate;
-	};
-});
+					if ($location.absUrl().indexOf('localhost') > -1)
+						path = 'local';
+					else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+						path = 'mac';
+					else
+						path = 'remote';
+
+					$http({
+						method : "GET",
+						url : "viewabilityController?path=" + path
+					}).then(function mySuccess(response) {
+						$scope.data = response.data;
+						$scope.showData = true;
+					}, function myError(response) {
+						$scope.sites = response.statusText;
+					});
+
+					$scope.exportData = function(type) {
+						if (type == 'IASexch') {
+							var blob = new Blob(
+									[ document.getElementById('exportable1').innerHTML ],
+									{
+										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+									});
+							saveAs(blob, "IAS_Exchange.xls");
+						} else if (type == 'MOATexch') {
+							var blob = new Blob(
+									[ document.getElementById('exportable2').innerHTML ],
+									{
+										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+									});
+							saveAs(blob, "MOAT_Exchange.xls");
+						} else if (type == 'IASNet') {
+							var blob = new Blob(
+									[ document.getElementById('exportable3').innerHTML ],
+									{
+										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+									});
+							saveAs(blob, "IAS_Network.xls");
+						} else if (type == 'MOATnet') {
+							var blob = new Blob(
+									[ document.getElementById('exportable4').innerHTML ],
+									{
+										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+									});
+							saveAs(blob, "MOAT_Network.xls");
+						}
+					};
+
+					$scope.order = function(predicate) {
+						$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
+								: false;
+						$scope.predicate = predicate;
+					};
+				});
 
 viewabilityApp.filter('percentage', [ '$filter', function($filter) {
 	return function(input, decimals) {
@@ -2541,7 +2568,28 @@ viewabilityApp.filter('percentage', [ '$filter', function($filter) {
 sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 
 	$scope.showData = false;
+	$scope.showAreaData = false;
+	var categories = [];
+	var trendsData = [];
 	
+	$scope.typeValue = 'col';
+	$scope.showCol = true;
+	$scope.showArea = false;
+	
+	var chartType = $scope.typeValue;
+	
+	$scope.changeChart = function() {
+		chartType = $scope.typeValue;
+		if(chartType == 'col') {
+			$scope.showCol = true;
+			$scope.showArea = false;
+		} else {
+			$scope.showCol = false;
+			$scope.showArea = true;
+		}
+		
+	};
+
 	if ($location.absUrl().indexOf('localhost') > -1)
 		path = 'local';
 	else if ($location.absUrl().indexOf('10.172.98.67') > -1)
@@ -2551,104 +2599,82 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 
 	$http({
 		method : "GET",
-		url : "sdkController?path="+path
-	}).then(function mySuccess(response) {
-		var data = response.data;
-		
-		var categories = [];
-		var trendsData = [];
+		url : "sdkController?path=" + path
+	}).then(
+			function mySuccess(response) {
+				var data = response.data;
 
-		var ios6DataObject = {};
-		var android6DataObject = {};
-		var ios5DataObject = {};
-		var android5DataObject = {};
-		var below4_6DataObject = {};
-		var jsDataObject = {};
-		var win_s2sDataObject = {};
-		var unknownDataObject = {};
+				var ios6DataObject = {};
+				var android6DataObject = {};
+				var ios5DataObject = {};
+				var android5DataObject = {};
+				var below4_6DataObject = {};
+				var jsDataObject = {};
+				var win_s2sDataObject = {};
+				var unknownDataObject = {};
 
-		ios6DataObject['name'] = 'iOS 6.0';
-		android6DataObject['name'] = 'Android 6.0';
-		ios5DataObject['name'] = 'iOS 5.0';
-		android5DataObject['name'] = 'Android 5.0';
-		below4_6DataObject['name'] = '4.6 and below';
-		jsDataObject['name'] = 'JS Tag';
-		win_s2sDataObject['name'] = 'Windows and S2S';
-		unknownDataObject['name'] = 'Unknown';
+				ios6DataObject['name'] = 'iOS 6.0';
+				android6DataObject['name'] = 'Android 6.0';
+				ios5DataObject['name'] = 'iOS 5.0';
+				android5DataObject['name'] = 'Android 5.0';
+				below4_6DataObject['name'] = '4.6 and below';
+				jsDataObject['name'] = 'JS Tag';
+				win_s2sDataObject['name'] = 'Windows and S2S';
+				unknownDataObject['name'] = 'Unknown';
 
-		var ios6Values = [];
-		var android6Values = [];
-		var ios5Values = [];
-		var android5Values = [];
-		var below4_6Values = [];
-		var jsValues = [];
-		var win_s2sValues = [];
-		var unknownValues = [];
+				var ios6Values = [];
+				var android6Values = [];
+				var ios5Values = [];
+				var android5Values = [];
+				var below4_6Values = [];
+				var jsValues = [];
+				var win_s2sValues = [];
+				var unknownValues = [];
 
-		for (var i = 0; i < Object
-				.keys(data).length; i++) {
-			categories
-					.push(data[i].month);
-			ios6Values
-					.push(data[i].ios6);
-			android6Values
-					.push(data[i].android6);
-			ios5Values
-					.push(data[i].ios5);
-			android5Values
-					.push(data[i].android5);
-			below4_6Values
-					.push(data[i].below4_6);
-			jsValues
-					.push(data[i].js);
-			win_s2sValues
-					.push(data[i].win_s2s);
-			unknownValues
-			.push(data[i].unknown);
+				for (var i = 0; i < Object.keys(data).length; i++) {
+					categories.push(data[i].month);
+					ios6Values.push(data[i].ios6);
+					android6Values.push(data[i].android6);
+					ios5Values.push(data[i].ios5);
+					android5Values.push(data[i].android5);
+					below4_6Values.push(data[i].below4_6);
+					jsValues.push(data[i].js);
+					win_s2sValues.push(data[i].win_s2s);
+					unknownValues.push(data[i].unknown);
 
-		}
-		ios6DataObject['data'] = ios6Values;
-		android6DataObject['data'] = android6Values;
-		ios5DataObject['data'] = ios5Values;
-		android5DataObject['data'] = android5Values;
-		below4_6DataObject['data'] = below4_6Values;
-		jsDataObject['data'] = jsValues;
-		win_s2sDataObject['data'] = win_s2sValues;
-		unknownDataObject['data'] = unknownValues;
+				}
+				ios6DataObject['data'] = ios6Values;
+				android6DataObject['data'] = android6Values;
+				ios5DataObject['data'] = ios5Values;
+				android5DataObject['data'] = android5Values;
+				below4_6DataObject['data'] = below4_6Values;
+				jsDataObject['data'] = jsValues;
+				win_s2sDataObject['data'] = win_s2sValues;
+				unknownDataObject['data'] = unknownValues;
 
-		trendsData
-				.push(ios6DataObject);
-		trendsData
-				.push(android6DataObject);
-		trendsData
-				.push(ios5DataObject);
-		trendsData
-				.push(android5DataObject);
-		trendsData
-				.push(below4_6DataObject);
-		trendsData
-				.push(jsDataObject);
-		trendsData
-				.push(win_s2sDataObject);
-		trendsData
-		.push(unknownDataObject);
+				trendsData.push(ios6DataObject);
+				trendsData.push(android6DataObject);
+				trendsData.push(ios5DataObject);
+				trendsData.push(android5DataObject);
+				trendsData.push(below4_6DataObject);
+				trendsData.push(jsDataObject);
+				trendsData.push(win_s2sDataObject);
+				trendsData.push(unknownDataObject);
+				$scope.sdkChart = drawStackedColumnChartWide(categories,
+							trendsData, 'Adoption Rate', 'SDK Adoption');
+				$scope.sdkAreaChart = drawAreaChartWide(categories,
+						trendsData, 'Adoption Rate', 'SDK Adoption');
+				$scope.showData = true;
 
-		$scope.sdkChart = drawStackedColumnChartWide(
-				categories, trendsData,
-				'Adoption Rate',
-				'SDK Adoption');
-		$scope.showData = true;
-		
-	}, function myError(response) {
-		$scope.sites = response.statusText;
-	});
-	
+			}, function myError(response) {
+				$scope.sites = response.statusText;
+			});
+
 	$scope.sdkBreakoutChartAndroid = drawPieChartAndroidSDK();
 	$scope.sdkBreakoutChartiOS = drawPieChartiOSSDK();
 	$scope.sdkBreakoutChartTotal = drawPieChartTotalSDK();
 
 });
-
 
 sdkApp.controller('nativeCtrl', function($scope, $http) {
 
@@ -2657,65 +2683,54 @@ sdkApp.controller('nativeCtrl', function($scope, $http) {
 	$http({
 		method : "GET",
 		url : "nativeController"
-	}).then(function mySuccess(response) {
-		var trends = response.data;
-		
-		var categories = [];
-		var data = [];
-		var revdata = [];
+	}).then(
+			function mySuccess(response) {
+				var trends = response.data;
 
-		var requestsDataObject = {};
-		var revenueDataObject = {};
+				var categories = [];
+				var data = [];
+				var revdata = [];
 
-		requestsDataObject['name'] = 'Inbound Requests';
-		revenueDataObject['name'] = 'Revenue';
+				var requestsDataObject = {};
+				var revenueDataObject = {};
 
-		var requestsValues = [];
-		var revenueValues = [];
-		
-		for (var i = 0; i < Object
-				.keys(trends).length; i++) {
-			categories
-					.push(trends[i].date);
-			requestsValues
-					.push(trends[i].requests);
-			revenueValues
-					.push(trends[i].spend);
-			
-		}
+				requestsDataObject['name'] = 'Inbound Requests';
+				revenueDataObject['name'] = 'Revenue';
 
-		requestsDataObject['data'] = requestsValues;
-		revenueDataObject['data'] = revenueValues;
+				var requestsValues = [];
+				var revenueValues = [];
 
+				for (var i = 0; i < Object.keys(trends).length; i++) {
+					categories.push(trends[i].date);
+					requestsValues.push(trends[i].requests);
+					revenueValues.push(trends[i].spend);
 
-		data.push(requestsDataObject);
-		revdata.push(revenueDataObject);
+				}
 
+				requestsDataObject['data'] = requestsValues;
+				revenueDataObject['data'] = revenueValues;
 
-		$scope.nativeReqsChart = drawLineChartWide(
-				categories,
-				data,
-				'Requests',
-				'Daily Inbound Requests', 1);
-		
-		$scope.nativeRevChart = drawLineChartWide(
-				categories,
-				revdata,
-				'Revenue ($)',
-				'Daily Revenue', 0);
-		
-		$scope.showNativeData = true;
-		
-	}, function myError(response) {
-		$scope.sites = response.statusText;
-	});
+				data.push(requestsDataObject);
+				revdata.push(revenueDataObject);
+
+				$scope.nativeReqsChart = drawLineChartWide(categories, data,
+						'Requests', 'Daily Inbound Requests', 1);
+
+				$scope.nativeRevChart = drawLineChartWide(categories, revdata,
+						'Revenue ($)', 'Daily Revenue', 0);
+
+				$scope.showNativeData = true;
+
+			}, function myError(response) {
+				$scope.sites = response.statusText;
+			});
 
 });
 
 sdkApp.controller('nativeDemandCtrl', function($scope, $http, $location) {
 
 	$scope.showNativeDemandData = false;
-	
+
 	if ($location.absUrl().indexOf('localhost') > -1)
 		path = 'local';
 	else if ($location.absUrl().indexOf('10.172.98.67') > -1)
@@ -2725,7 +2740,7 @@ sdkApp.controller('nativeDemandCtrl', function($scope, $http, $location) {
 
 	$http({
 		method : "GET",
-		url : "nativeDemandController?path="+path
+		url : "nativeDemandController?path=" + path
 	}).then(function mySuccess(response) {
 		$scope.data = response.data;
 		$scope.showNativeDemandData = true;
@@ -2735,88 +2750,101 @@ sdkApp.controller('nativeDemandCtrl', function($scope, $http, $location) {
 
 });
 
+sdkApp.controller('osCtrl', function($scope, $http, $location) {
+
+	$scope.showOsData = false;
+
+	if ($location.absUrl().indexOf('localhost') > -1)
+		path = 'local';
+	else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+		path = 'mac';
+	else
+		path = 'remote';
+
+	$http({
+		method : "GET",
+		url : "osVerController"
+	}).then(function mySuccess(response) {
+		$scope.data = response.data;
+		$scope.showOsData = true;
+	}, function myError(response) {
+		$scope.data = response.statusText;
+	});
+
+});
+
 adqualityApp.controller('adqualityCtrl', function($scope, $http) {
 
 	$scope.showData = false;
-	
+
 	$http({
 		method : "GET",
 		url : "adQualityController?type=bidders"
 	}).then(function mySuccess(response) {
 		$scope.data = response.data;
-		//$scope.showData = true;
+		// $scope.showData = true;
 	}, function myError(response) {
 		$scope.sites = response.statusText;
 	});
-	
+
 	$http({
 		method : "GET",
 		url : "adQualityController?type=daily"
-	}).then(function mySuccess(response) {
-		var trends = response.data;
-		
-		var categories = [];
-		var data = [];
-		var data2 = [];
+	}).then(
+			function mySuccess(response) {
+				var trends = response.data;
 
-		var verifiedDataObject = {};
-		var unverifiedDataObject = {};
-		var verifiedSeenDataObject = {};
-		var unverifiedSeenDataObject = {};
+				var categories = [];
+				var data = [];
+				var data2 = [];
 
-		verifiedDataObject['name'] = 'Verified';
-		unverifiedDataObject['name'] = 'Unverifiable';
-		verifiedSeenDataObject['name'] = 'Verified Seen Count';
-		unverifiedSeenDataObject['name'] = 'Unverified Seen Count';
+				var verifiedDataObject = {};
+				var unverifiedDataObject = {};
+				var verifiedSeenDataObject = {};
+				var unverifiedSeenDataObject = {};
 
-		var verifiedValues = [];
-		var unverifiedValues = [];
-		var verifiedSeenValues = [];
-		var unverifiedSeenValues = [];
-		
-		for (var i = 0; i < Object
-				.keys(trends).length; i++) {
-			categories
-					.push(trends[i].date);
-			verifiedValues
-					.push(trends[i].verified);
-			unverifiedValues
-					.push(trends[i].unverified);
-			verifiedSeenValues
-					.push(trends[i].verifiedSeen);
-			unverifiedSeenValues
-					.push(trends[i].unverifiedSeen);
-			
-		}
+				verifiedDataObject['name'] = 'Verified';
+				unverifiedDataObject['name'] = 'Unverifiable';
+				verifiedSeenDataObject['name'] = 'Verified Seen Count';
+				unverifiedSeenDataObject['name'] = 'Unverified Seen Count';
 
-		verifiedDataObject['data'] = verifiedValues;
-		unverifiedDataObject['data'] = unverifiedValues;
-		verifiedSeenDataObject['data'] = verifiedSeenValues;
-		unverifiedSeenDataObject['data'] = unverifiedSeenValues;
+				var verifiedValues = [];
+				var unverifiedValues = [];
+				var verifiedSeenValues = [];
+				var unverifiedSeenValues = [];
 
-		data.push(verifiedDataObject);
-		data.push(unverifiedDataObject);
-		data2.push(verifiedSeenDataObject);
-		data2.push(unverifiedSeenDataObject);
+				for (var i = 0; i < Object.keys(trends).length; i++) {
+					categories.push(trends[i].date);
+					verifiedValues.push(trends[i].verified);
+					unverifiedValues.push(trends[i].unverified);
+					verifiedSeenValues.push(trends[i].verifiedSeen);
+					unverifiedSeenValues.push(trends[i].unverifiedSeen);
 
-		$scope.theoremChart = drawLineChartWide(
-				categories,
-				data,
-				'Values',
-				'Daily Verified vs Unverifiable', 1);
-		
-		$scope.theoremChart2 = drawLineChartWide(
-				categories,
-				data2,
-				'Values',
-				'Daily Verified vs Unverifiable Seen Count', 1);
-		
-		$scope.showData = true;
-		
-	}, function myError(response) {
-		$scope.sites = response.statusText;
-	});
-	
+				}
+
+				verifiedDataObject['data'] = verifiedValues;
+				unverifiedDataObject['data'] = unverifiedValues;
+				verifiedSeenDataObject['data'] = verifiedSeenValues;
+				unverifiedSeenDataObject['data'] = unverifiedSeenValues;
+
+				data.push(verifiedDataObject);
+				data.push(unverifiedDataObject);
+				data2.push(verifiedSeenDataObject);
+				data2.push(unverifiedSeenDataObject);
+
+				$scope.theoremChart = drawLineChartWide(categories, data,
+						'Values', 'Daily Verified vs Unverifiable', 1);
+
+				$scope.theoremChart2 = drawLineChartWide(categories, data2,
+						'Values', 'Daily Verified vs Unverifiable Seen Count',
+						1);
+
+				$scope.showData = true;
+
+			}, function myError(response) {
+				$scope.sites = response.statusText;
+			});
+
 	$scope.order = function(predicate) {
 		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
 				: false;
@@ -2832,86 +2860,75 @@ adqualityApp.filter('percentage', [ '$filter', function($filter) {
 
 adqualityBidderApp.config(function($locationProvider) {
 	$locationProvider.html5Mode({
-			  enabled: true,
-			  requireBase: false
+		enabled : true,
+		requireBase : false
 	});
 });
 
-adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http, $location) {
+adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http,
+		$location) {
 
 	$scope.showData = false;
-	
-	$scope.bidderName = $location.search().bidder; 
-	
+
+	$scope.bidderName = $location.search().bidder;
+
 	$http({
 		method : "GET",
-		url : "adQualityController?type=bidder&bidder="+$scope.bidderName
-	}).then(function mySuccess(response) {
-		$scope.data = response.data;
-		var trends = $scope.data;
-		
-		var categories = [];
-		var data = [];
-		var data2 = [];
+		url : "adQualityController?type=bidder&bidder=" + $scope.bidderName
+	}).then(
+			function mySuccess(response) {
+				$scope.data = response.data;
+				var trends = $scope.data;
 
-		var verifiedDataObject = {};
-		var unverifiedDataObject = {};
-		var verifiedSeenDataObject = {};
-		var unverifiedSeenDataObject = {};
+				var categories = [];
+				var data = [];
+				var data2 = [];
 
-		verifiedDataObject['name'] = 'Verified';
-		unverifiedDataObject['name'] = 'Unverifiable';
-		verifiedSeenDataObject['name'] = 'Verified Seen Count';
-		unverifiedSeenDataObject['name'] = 'Unverifiable Seen Count';
+				var verifiedDataObject = {};
+				var unverifiedDataObject = {};
+				var verifiedSeenDataObject = {};
+				var unverifiedSeenDataObject = {};
 
-		var verifiedValues = [];
-		var unverifiedValues = [];
-		var verifiedSeenValues = [];
-		var unverifiedSeenValues = [];
-		
-		for (var i = 0; i < Object
-				.keys(trends).length; i++) {
-			categories
-					.push(trends[i].date);
-			verifiedValues
-					.push(trends[i].verified);
-			unverifiedValues
-					.push(trends[i].unverified);
-			verifiedSeenValues
-					.push(trends[i].verifiedSeen);
-			unverifiedSeenValues
-					.push(trends[i].unverifiedSeen);
-			
-		}
+				verifiedDataObject['name'] = 'Verified';
+				unverifiedDataObject['name'] = 'Unverifiable';
+				verifiedSeenDataObject['name'] = 'Verified Seen Count';
+				unverifiedSeenDataObject['name'] = 'Unverifiable Seen Count';
 
-		verifiedDataObject['data'] = verifiedValues;
-		unverifiedDataObject['data'] = unverifiedValues;
-		verifiedSeenDataObject['data'] = verifiedSeenValues;
-		unverifiedSeenDataObject['data'] = unverifiedSeenValues;
+				var verifiedValues = [];
+				var unverifiedValues = [];
+				var verifiedSeenValues = [];
+				var unverifiedSeenValues = [];
 
+				for (var i = 0; i < Object.keys(trends).length; i++) {
+					categories.push(trends[i].date);
+					verifiedValues.push(trends[i].verified);
+					unverifiedValues.push(trends[i].unverified);
+					verifiedSeenValues.push(trends[i].verifiedSeen);
+					unverifiedSeenValues.push(trends[i].unverifiedSeen);
 
-		data.push(verifiedDataObject);
-		data.push(unverifiedDataObject);
-		data2.push(verifiedSeenDataObject);
-		data2.push(unverifiedSeenDataObject);
+				}
 
+				verifiedDataObject['data'] = verifiedValues;
+				unverifiedDataObject['data'] = unverifiedValues;
+				verifiedSeenDataObject['data'] = verifiedSeenValues;
+				unverifiedSeenDataObject['data'] = unverifiedSeenValues;
 
-		$scope.theoremChart = drawLineChartWide(
-				categories,
-				data,
-				'Values',
-				'Daily Verified vs Unverifiable', 0);
-		$scope.theoremChart2 = drawLineChartWide(
-				categories,
-				data2,
-				'Values',
-				'Daily Verified vs Unverifiable Seen Count', 0);
+				data.push(verifiedDataObject);
+				data.push(unverifiedDataObject);
+				data2.push(verifiedSeenDataObject);
+				data2.push(unverifiedSeenDataObject);
 
-		$scope.showData = true;
-	}, function myError(response) {
-		$scope.sites = response.statusText;
-	});
-	
+				$scope.theoremChart = drawLineChartWide(categories, data,
+						'Values', 'Daily Verified vs Unverifiable', 0);
+				$scope.theoremChart2 = drawLineChartWide(categories, data2,
+						'Values', 'Daily Verified vs Unverifiable Seen Count',
+						0);
+
+				$scope.showData = true;
+			}, function myError(response) {
+				$scope.sites = response.statusText;
+			});
+
 	$scope.order = function(predicate) {
 		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
 				: false;
@@ -2922,7 +2939,18 @@ adqualityBidderApp.controller('adqualityBidderCtrl', function($scope, $http, $lo
 mobDealApp.controller('mobDealCtrl', function($scope, $http, $location) {
 	$scope.showReqs = false;
 	$scope.showEcpm = false;
-	
+	$scope.showRev = false;
+
+	$http({
+		method : "GET",
+		url : "mobDealController?type=rev"
+	}).then(function mySuccess(response) {
+		$scope.revData = response.data;
+		$scope.showRev = true;
+	}, function myError(response) {
+		$scope.showRev = response.statusText;
+	});
+
 	$http({
 		method : "GET",
 		url : "mobDealController?type=reqs"
@@ -2932,7 +2960,7 @@ mobDealApp.controller('mobDealCtrl', function($scope, $http, $location) {
 	}, function myError(response) {
 		$scope.reqsData = response.statusText;
 	});
-	
+
 	$http({
 		method : "GET",
 		url : "mobDealController?type=ecpm"
@@ -2943,6 +2971,3 @@ mobDealApp.controller('mobDealCtrl', function($scope, $http, $location) {
 		$scope.reqsData = response.statusText;
 	});
 });
-
-
-

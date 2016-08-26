@@ -28,6 +28,8 @@ public class MobDealController  extends HttpServlet {
 			getRequests(request, response);
 		else if(type.equals("ecpm"))
 			getEcpm(request, response);
+		else if(type.equals("rev"))
+			getRevenue(request, response);
 	}
 	
 	private void getRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -41,6 +43,14 @@ public class MobDealController  extends HttpServlet {
 	private void getEcpm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		DataAccess d = new DataAccess();
 		List<GenericObject> data = d.getEcpm();
+		String json = new Gson().toJson(data);
+		response.setContentType("application/json");
+		response.getWriter().write(json);
+	}
+	
+	private void getRevenue(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		DataAccess d = new DataAccess();
+		String[] data = d.getRevenue();
 		String json = new Gson().toJson(data);
 		response.setContentType("application/json");
 		response.getWriter().write(json);

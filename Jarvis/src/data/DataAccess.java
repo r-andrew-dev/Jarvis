@@ -3673,27 +3673,26 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select vid.country, fsi.reqs, vid.reqs "
-						+"from "
-						+"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
-						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
-						+"where c.name = 'Mobilityware' "
-						+"and s.company_id = c.id "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
-						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-						+"and f.zone like '%video%' "
-						+"group by 1) vid left outer join  "
-						+"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
-						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
-						+"where c.name = 'Mobilityware' "
-						+"and s.company_id = c.id "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
-						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-						+"and f.zone like '%interstitial%' "
-						+"group by 1) fsi on vid.country = fsi.country";
++"from "
++"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
++"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
++"where s.company_id = 17551 "
++"and f.site_id = s.id "
++"and f.start >= '2016-07-15' and f.start < '2016-10-01' "
++"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
++"and f.zone like '%video%' "
++"group by 1) vid left outer join  "
++"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
++"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
++"where s.company_id = 17551 "
++"and f.site_id = s.id "
++"and f.start >= '2016-07-15' and f.start < '2016-10-01' "
++"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
++"and f.zone like '%interstitial%' "
++"group by 1) fsi on vid.country = fsi.country";
 		
 		List<GenericObject> countryReqs = new ArrayList<GenericObject>();
+		Map<String, String[]> mydasReqs = getMydasRequests();
 		
 		try {
 
@@ -3704,7 +3703,7 @@ public class DataAccess {
 
 			while (rs.next()) {
 				GenericObject o = new GenericObject();
-				String[] reqs = new String[4];
+				String[] reqs = new String[6];
 				o.setAttribute(rs.getString(1));
 				reqs[0] = rs.getString(2);
 				reqs[1] = rs.getString(3);
@@ -3712,26 +3711,234 @@ public class DataAccess {
 				if(o.getAttribute().equals("USA")) {
 					reqs[2] = "7500000";
 					reqs[3] = "22500000";
+					reqs[4] = mydasReqs.get("USA")[0];
+					reqs[5] = mydasReqs.get("USA")[1];
 				} else if(o.getAttribute().equals("GBR")) {
 					reqs[2] = "6000000";
 					reqs[3] = "12000000";
+					reqs[4] = mydasReqs.get("GBR")[0];
+					reqs[5] = mydasReqs.get("GBR")[1];
 				} else if(o.getAttribute().equals("CAN")) {
 					reqs[2] = "6000000";
 					reqs[3] = "12000000";
+					reqs[4] = mydasReqs.get("CAN")[0];
+					reqs[5] = mydasReqs.get("CAN")[1];
 				} else if(o.getAttribute().equals("DEU")) {
 					reqs[2] = "3000000";
 					reqs[3] = "9000000";
+					reqs[4] = mydasReqs.get("DEU")[0];
+					reqs[5] = mydasReqs.get("DEU")[1];
 				} else if(o.getAttribute().equals("FRA")) {
 					reqs[2] = "3000000";
 					reqs[3] = "9000000";
+					reqs[4] = mydasReqs.get("FRA")[0];
+					reqs[5] = mydasReqs.get("FRA")[1];
 				} else if(o.getAttribute().equals("AUS")) {
 					reqs[2] = "1500000";
 					reqs[3] = "4500000";
+					reqs[4] = mydasReqs.get("AUS")[0];
+					reqs[5] = mydasReqs.get("AUS")[1];
 				} else if(o.getAttribute().equals("JPN")) {
 					reqs[2] = "1500000";
 					reqs[3] = "4500000";
+					reqs[4] = mydasReqs.get("JPN")[0];
+					reqs[5] = mydasReqs.get("JPN")[1];
 				}
 				countryReqs.add(o);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return countryReqs;
+
+	}
+	
+	public String[] getRevenue() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select sum(revenue) rev, sum(revenue)-sum(revenue_net) pubrev, (sum(revenue)-sum(revenue_net))/datediff(curdate(), '2016-07-14')*78 projrev "
+						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_exchange_wins f "
+						+"where c.name = 'Mobilityware' "
+						+"and s.company_id = c.id "
+						+"and f.site_id = s.id "
+						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
+						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN')";
+		
+		String[] revNumbers = new String[7];
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				revNumbers[0] = rs.getString(1);
+				revNumbers[1] = rs.getString(2);
+				revNumbers[2] = rs.getString(3);
+				revNumbers[6] = "100000";
+			}
+			
+			getMydasRevenue(revNumbers);
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return revNumbers;
+
+	}
+	
+	public void getMydasRevenue(String[] revNumbers) {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select sum(r.costs), sum(r.costs)*0.7, (sum(r.costs)*0.7)/datediff(curdate(), '2016-07-14')*78 "
+						+"from mmedia.rollup_site_country_campaign_day_costs r, mmedia.countries c, mmedia.sites s "
+						+"where s.publisherid = 4411 "
+						+"and r.site_id = s.id "
+						+"and adddate('1970-01-01', interval r.dayperiod day) >= '2016-07-15' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-08-04' "
+						+"and c.id = r.country_id "
+						+"and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN')";
+		
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("mmedia");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				revNumbers[3] = rs.getString(1);
+				revNumbers[4] = rs.getString(2);
+				revNumbers[5] = rs.getString(3);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+
+	}
+	
+	public Map<String, String[]> getMydasRequests() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select vid.alpha_3, vid.reqs, fsi.reqs "
+						+"from (select c.alpha_3, sum(r.views) reqs "
+						+"from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c, mmedia.sites s, mmedia.placements p "
+						+"where s.publisherid = 4411 "
+						+"and p.siteid = s.id "
+						+"and p.name like '%VIDEO' "
+						+"and r.placement_id = p.id "
+						+"and adddate('1970-01-01', interval r.dayperiod day) >= '2016-08-01' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-09-30' "
+						+"and c.id = r.country_id "
+						+"and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+						+"group by 1) vid, "
+						+"(select c.alpha_3, sum(r.views) reqs "
+						+"from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c, mmedia.sites s, mmedia.placements p "
+						+"where s.publisherid = 4411 "
+						+"and p.siteid = s.id "
+						+"and p.name like '%STATIC' "
+						+"and r.placement_id = p.id "
+						+"and adddate('1970-01-01', interval r.dayperiod day) >= '2016-08-01' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-09-30' "
+						+"and c.id = r.country_id "
+						+"and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+						+"group by 1) fsi "
+						+"where vid.alpha_3 = fsi.alpha_3";
+		
+		Map<String, String[]> countryReqs = new HashMap<String, String[]>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("mmedia");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				String[] reqs = new String[2];
+				reqs[0] = rs.getString(2);
+				reqs[1] = rs.getString(3);
+				countryReqs.put(rs.getString(1), reqs);
 			}
 
 		} catch (Exception ex) {
@@ -3771,27 +3978,23 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select vid.country, vid.ecpm, vid.pubecpm, fsi.ecpm, fsi.pubecpm "
-						+"from "
-						+"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
-						+"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
-						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_exchange_wins f "
-						+"where c.name = 'Mobilityware' "
-						+"and s.company_id = c.id "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
-						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-						+"and f.zone like '%video%' "
-						+"group by 1) vid left outer join  "
-						+"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
-						+"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
-						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_exchange_wins f "
-						+"where c.name = 'Mobilityware' "
-						+"and s.company_id = c.id "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
-						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-						+"and f.zone like '%interstitial%' "
-						+"group by 1) fsi on vid.country = fsi.country";
++"from "
++"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
++"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
++"from datawarehouse.fact_revenue_adnet f "
++"where f.publisher_id = 17551 "
++"and f.start >= '2016-07-15' and f.start <= '2016-10-01' "
++"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
++"and f.zone like '%video%' "
++"group by 1) vid left outer join  "
++"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
++"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
++"from datawarehouse.fact_revenue_adnet f "
++"where f.publisher_id = 17551 "
++"and f.start >= '2016-07-15' and f.start <= '2016-10-01' "
++"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
++"and f.zone like '%interstitial%' "
++"group by 1) fsi on vid.country = fsi.country";
 		
 		List<GenericObject> countryReqs = new ArrayList<GenericObject>();
 		
@@ -3863,6 +4066,65 @@ public class DataAccess {
 		}
 
 		return countryReqs;
+
+	}
+	
+	public List<GenericObject> getReqsByOsVersions() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select f.device_os, f.device_osv, sum(f.ads_requested) reqs "
++"from datawarehouse.fact_traffic_targeted_site f "
++"where date(f.start) >= date_sub(curdate(), interval 30 day) "
++"and f.device_os <> '???' "
++"group by 2 having reqs > 9999 "
++"order by 3 desc";
+		
+		List<GenericObject> osVerReqs = new ArrayList<GenericObject>();
+		
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				GenericObject o = new GenericObject();
+				o.setAttribute(rs.getString(1)+" "+rs.getString(2));
+				o.setRequests(rs.getLong(3));
+				osVerReqs.add(o);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return osVerReqs;
 
 	}
 

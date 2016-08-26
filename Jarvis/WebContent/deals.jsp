@@ -59,6 +59,29 @@
 	<div id="narrowblank"></div>
 	<div id="mainDiv" ng-app="mobDealApp"
 		ng-controller="mobDealCtrl">
+		<div id="spinner" ng-hide="showRev">
+			<img class="spinningwheel" src="images/spinningwheel.gif" />
+		</div>
+		<div ng-show="showRev">
+		Revenue<br><hr><br>
+		<table class="dataTable">
+			<tr class="headerRow"><th>Nexage Gross Revenue</th><th>Nexage Pub Revenue</th><th>Mydas Gross Revenue</th>
+			<th>Mydas Pub Revenue</th><th>Total Gross Revenue</th><th>Total Pub Revenue</th><th>Total Pub Projected Revenue</th>
+			<th>Revenue Goal</th><th>Revenue Goal Status</th></tr>
+			<tr>
+			<td>{{ revData[0] | currency }}</td>
+			<td>{{ revData[1] | currency }}</td>
+			<td>{{ revData[3] | currency }}</td>
+			<td>{{ revData[4] | currency }}</td>
+			<td>{{ 1*revData[0]+1*revData[3] | currency }}</td>		
+			<td>{{ 1*revData[1]+1*revData[4] | currency }}</td>
+			<td>{{ 1*revData[2]+1*revData[5] | currency }}</td>
+			<td>{{ revData[6] | currency }}</td>
+			<td><span ng-if="1*revData[2]+1*revData[5] >= 1*revData[6]" style="color:green;">&#10004;</span><span ng-if="1*revData[2]+1*revData[5] < 1*revData[6]" style="color:red;">&#10060;</span></td>
+			</tr>
+		</table>
+		</div>
+		<br><br>
 		<div id="spinner" ng-hide="showReqs">
 			<img class="spinningwheel" src="images/spinningwheel.gif" />
 		</div>
@@ -72,15 +95,15 @@
 			<tr ng-repeat="country in reqsData">
 			<td>{{ country.code }}</td>
 			<td>{{ country.values[0] | number:0 }}</td>
-			<td>{{  }}</td>
-			<td>{{ 1*country.values[0]+0 | number:0 }}</td>
+			<td>{{ country.values[5] | number:0 }}</td>
+			<td>{{ 1*country.values[0]+1*country.values[5] | number:0 }}</td>
 			<td>{{ country.values[2] | number:0 }}</td>
-			<td><span ng-if="1*country.values[0]+0 > country.values[2]" style="color:green;">&#10004;</span><span ng-if="1*country.values[0]+0 <= country.values[2]" style="color:red;">&#10060;</span></td>
+			<td><span ng-if="1*country.values[0]+1*country.values[5] > country.values[2]" style="color:green;">&#10004;</span><span ng-if="1*country.values[0]+1*country.values[5] <= country.values[2]" style="color:red;">&#10060;</span></td>
 			<td>{{ country.values[1] | number:0 }}</td>
-			<td>{{  }}</td>
-			<td>{{ 1*country.values[1]+0 | number:0 }}</td>
+			<td>{{ country.values[4] | number:0 }}</td>
+			<td>{{ 1*country.values[1]+1*country.values[4] | number:0 }}</td>
 			<td>{{ country.values[3] | number:0 }}</td>	
-			<td><span ng-if="1*country.values[1]+0 >= country.values[3]" style="color:green;">&#10004;</span><span ng-if="1*country.values[1]+0 < country.values[3]" style="color:red;">&#10060;</span></td>
+			<td><span ng-if="1*country.values[1]+1*country.values[4] >= country.values[3]" style="color:green;">&#10004;</span><span ng-if="1*country.values[1]+1*country.values[4] < country.values[3]" style="color:red;">&#10060;</span></td>
 			</tr>
 		</table>
 		</div>
@@ -92,8 +115,8 @@
 		eCPM<br><hr><br>
 		<table class="dataTable">
 			<tr class="headerRow"><th>Country</th><th>FSI Gross eCPM</th><th>FSI Pub eCPM</th>
-			<th>FSI eCPM Floor</th><th>FSI eCPM Goal Status</th>
-			<th>Video Gross eCPM</th><th>Video Pub eCPM</th><th>Video eCPM Floor</th><th>Video eCPM Goal Status</th>	
+			<th>FSI eCPM Goal</th><th>FSI eCPM Goal Status</th>
+			<th>Video Gross eCPM</th><th>Video Pub eCPM</th><th>Video eCPM Goal</th><th>Video eCPM Goal Status</th>	
 			<tr ng-repeat="country in ecpmData">
 			<td>{{ country.code }}</td>
 			<td>{{ country.values[2] | currency }}</td>

@@ -52,7 +52,7 @@
 <body>
 	<div id="header"></div>
 	<div id="blank"></div>
-	<span class="pageHeading">O&O ANALYSIS</span>
+	<span class="pageHeading">O&O DATA</span>
 	<div id="narrowblank"></div>
 	<div id="mainDiv" ng-app="ooApp" ng-controller="ooCtrl">
 		<div id="spinner" ng-hide="showTable">

@@ -88,6 +88,10 @@
     <servlet-name>nativeDemandController</servlet-name>
     <servlet-class>controller.NativeDemandController</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>osVerController</servlet-name>
+    <servlet-class>controller.OsVerController</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>javaAngularJS</servlet-name>
     <url-pattern>/javaAngularJS</url-pattern>
@@ -167,5 +171,9 @@
   <servlet-mapping>
     <servlet-name>nativeDemandController</servlet-name>
     <url-pattern>/nativeDemandController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>osVerController</servlet-name>
+    <url-pattern>/osVerController</url-pattern>
   </servlet-mapping>
 </web-app>

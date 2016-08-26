@@ -56,7 +56,7 @@ public class ExcelHelper {
 		}
 
 		reader.close();
-		System.out.println("read ams");
+		
 
 		for (int i = 0; i < exchanges.size(); i++) {
 			Exchange currExchange = exchanges.get(i);

@@ -179,7 +179,7 @@ function drawStackedColumnChartWide(categories, data, yAxisText, title) {
 	            	enabled: true
 	            },
 	            xAxis: {
-	            	categories: categories
+	                categories: categories
 	            },
 	            yAxis: {
 	                min: 0,
@@ -206,6 +206,76 @@ function drawStackedColumnChartWide(categories, data, yAxisText, title) {
 	            },
 	            plotOptions: {
 	            	column: {
+	            		stacking: 'normal',
+	            		pointPadding: 0.2,
+	                    borderWidth: 0
+	            	},
+	            	series: {
+	                    point: {
+	                        events: {
+	                            click: function() {
+	                            	angular.element(document.getElementById('mainDiv')).scope().showData(this.series.name, this.category, title, yAxisText);
+	                            }
+	                        }
+	                    }
+	                  }
+	            }
+	        },
+	        series: data,
+	        title: {
+	            text: title
+	        },
+	        loading: false
+	}
+	
+	return obj;
+}
+
+function drawAreaChartWide(categories, data, yAxisText, title) {
+	var obj = {
+			options: {
+	            chart: {
+	                type: 'area',
+	                width: 1370,
+	                height: 550,
+	                backgroundColor: '#FFFFFF'
+	            },
+	            colors: ['#000000','#006600','#00ccff','#ff0000','#33cc33','#ffff00','#993300','#003366','#6600cc','#990099','#00cc00','#cc3300',
+	                     '#00ffff','#666633','#669999','#ff00ff','#1a66ff','#ff9933','#66ff33','#ff8566','#663300','#006699','#ffccff','#00ccff','#000000'],
+	            tooltip: {
+	            	
+	            },
+	            legend: {
+	            	enabled: true
+	            },
+	            xAxis: {
+	                categories: categories
+	            },
+	            yAxis: {
+	                min: 0,
+	                title: {
+	                    text: yAxisText
+	                },
+	                labels: {
+	                	enabled: true,
+	                	formatter : function() {
+	                		if(this.value > 1000000000)
+	                			return this.value/1000000000+"B";
+	                		else if(this.value > 1000000)
+	                			return this.value/1000000+"M";
+	                		else if(this.value > 1000)
+	                			return this.value/1000+"K";
+	                		else
+	                			return this.value;
+						}
+	                }
+	            },
+	            tooltip: {
+	                headerFormat: '<b>{point.x}</b><br/>',
+	                pointFormat: '{series.name}: {point.y}<br/>{point.percentage:.1f}%'
+	            },
+	            plotOptions: {
+	            	area: {
 	            		stacking: 'normal',
 	            		pointPadding: 0.2,
 	                    borderWidth: 0

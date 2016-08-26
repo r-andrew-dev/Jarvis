@@ -61,7 +61,7 @@
 			<ul class="tab-links">
 				<li class="active"><a href="#tab1">SDK Adoption</a></li>
 				<li><a href="#tab2">Native</a></li>
-				<!-- <li><a href="#tab3">Video</a></li> -->
+				<li><a href="#tab3">OS Versions</a></li>
 			</ul>
 
 			<div class="tab-content">
@@ -69,10 +69,23 @@
 					<div ng-controller="sdkCtrl">
 						<br> <br>
 						<div id="spinner" ng-hide="showData">
-							<img class="spinningwheel" src="images/spinningwheel.gif" />
+							<img class="spinningwheel" src="images/spinningwheel.gif"/>
 						</div>
-						<div>
+						
+						<span style="float:right;">
+						Select chart style<br>
+						    Column:
+						    <input id="colRadio" type="radio" ng-model="typeValue" value="col" ng-click="changeChart()"/>&nbsp;&nbsp;
+						    Area:
+						    <input id="areaRadio" type="radio" ng-model="typeValue" value="area" ng-click="changeChart()"/>&nbsp;&nbsp;
+							<br><br>
+						 </span>
+						
+						<div ng-show="showCol">
 							<highchart id="sdkChart" config="sdkChart"></highchart>
+						</div>
+						<div ng-show="showArea">
+							<highchart id="sdkAreaChart" config="sdkAreaChart"></highchart>
 						</div>
 						<br><br>
 						<div>
@@ -129,19 +142,24 @@
 					</div>
 				</div>
 				<div id="tab3" class="tab">
-					<!-- <div ng-controller="nativeCtrl">
+					<div ng-controller="osCtrl">
 					<br> <br>
-					<div id="spinner" ng-hide="showNativeData">
+					<div id="spinner" ng-hide="showOsData">
 							<img class="spinningwheel" src="images/spinningwheel.gif" />
 						</div>
-						<div ng-show="showNativeData">
-							<highchart id="nativeReqsChart" config="nativeReqsChart"></highchart>
+						<div ng-show="showOsData">
+						<span class="pageSubHeading">Nexage Requests by OS Versions - Last 30 days</span><br><br>
+							<table class="dataTable" ng-show="showOsData">
+							<tr class="headerRow">
+								<th>OS Version</th>
+								<th>Requests</th>
+							</tr>
+							<tr ng-repeat="osv in data">
+								<td>{{ osv.code }}</td>
+								<td>{{ osv.z | number:0 }}</td>
+						</table>
 						</div>
-						<br> <br>
-						<div ng-show="showNativeData">
-							<highchart id="nativeRevChart" config="nativeRevChart"></highchart>
-						</div>
-				</div> -->
+				</div> 
 				</div>
 			</div>
 		</div>
