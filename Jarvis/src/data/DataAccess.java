@@ -38,37 +38,33 @@ public class DataAccess {
 
 	private static String MMEDIA1_CONNECTION_STRING = "jdbc:mysql://mmedia.db.corp.millennialmedia.com:3306/mmedia?"
 			+ "user=kbasu&password=mMKb46^feB";
-	
+
 	private static String MMEDIA_CONNECTION_STRING = "jdbc:mysql://db07.prod.mia.millennialmedia.com:3306/mmedia?"
 			+ "user=kbasu&password=mMKb46^feB";
 
 	private static String NEX1_CONNECTION_STRING = "jdbc:mysql://n4d201s.nexage.com:3306/core?"
 			+ "user=kbasu&password=*rkqNBAgsu4x^jA@";
 
-	
 	private static String NEX1A_CONNECTION_STRING = "jdbc:mysql://192.168.100.158:3306/core?"
 			+ "user=core_reader&password=read2011";
-	 
 
 	private static String NEX2_CONNECTION_STRING = "jdbc:mysql://n4d201s.nexage.com:5029/datawarehouse?"
 			+ "user=kbasu&password=*rkqNBAgsu4x^jA@";
 
-	
-	private static String NEX2A_CONNECTION_STRING = "jdbc:mysql://192.168.100.116:5030/datawarehouse?" +
-	 "user=dw_reader&password=read2011";
-	 
-	 private static String JARVIS_CONNECTION_STRING = "jdbc:mysql://10.172.98.67:3306/Jarvis?" +
-			 "user=kbasu&password=password123";
-	 
+	private static String NEX2A_CONNECTION_STRING = "jdbc:mysql://192.168.100.116:5030/datawarehouse?"
+			+ "user=dw_reader&password=read2011";
+
+	private static String JARVIS_CONNECTION_STRING = "jdbc:mysql://10.172.98.67:3306/Jarvis?"
+			+ "user=kbasu&password=password123";
 
 	private String salesReps = "'jparatore','ogillis','ddroddy','abennett','tyannopoulos','cserio','jschuerholz','hulloa'";
 	private String mmediaReps = "'ddroddy@millennialmedia.com','jparatore@millennialmedia.com','ogillis@millennialmedia.com','abennett@millennialmedia.com','tyannopoulos@millennialmedia.com','jschuerholz@millennialmedia.com','hulloa@millennialmedia.com'";
 
 	public List<Account> accounts = new ArrayList<Account>();
-	
+
 	private Connection getConnection(String type) {
 		Connection conn = null;
-		if(type.equals("nex_core")) {
+		if (type.equals("nex_core")) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				conn = DriverManager.getConnection(NEX1_CONNECTION_STRING);
@@ -78,11 +74,11 @@ public class DataAccess {
 					conn = DriverManager.getConnection(NEX1A_CONNECTION_STRING);
 				} catch (Exception e1) {
 					e1.printStackTrace();
-				} 
-				
-			} 
-			
-		} else if(type.equals("nex_dw")) {
+				}
+
+			}
+
+		} else if (type.equals("nex_dw")) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				conn = DriverManager.getConnection(NEX2_CONNECTION_STRING);
@@ -92,11 +88,11 @@ public class DataAccess {
 					conn = DriverManager.getConnection(NEX2A_CONNECTION_STRING);
 				} catch (Exception e1) {
 					e1.printStackTrace();
-				} 
-				
-			} 
-			
-		} else if(type.equals("mmedia")) {
+				}
+
+			}
+
+		} else if (type.equals("mmedia")) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				conn = DriverManager.getConnection(MMEDIA_CONNECTION_STRING);
@@ -106,12 +102,12 @@ public class DataAccess {
 					conn = DriverManager.getConnection(MMEDIA1_CONNECTION_STRING);
 				} catch (Exception e1) {
 					e1.printStackTrace();
-				} 
-				
-			} 
-			
+				}
+
+			}
+
 		}
-		
+
 		return conn;
 	}
 
@@ -309,7 +305,6 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		try {
-
 
 			conn = getConnection("mmedia");
 			stmt = conn.createStatement();
@@ -1302,21 +1297,18 @@ public class DataAccess {
 
 		return p;
 	}
-	
+
 	public void getNexCountryReqs(Placement p, String siteIdList) {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<GenericObject> countries = new ArrayList<GenericObject>();
-		String query = "select t.country, sum(t.ads_requested) "
-						+"from datawarehouse.fact_traffic_site t "
-						+"where t.site_id in ("+siteIdList+") "
-						+"and date(t.start) >= date_sub(curdate(), interval 7 day) and date(t.start) < curdate() "
-						+"group by 1 "
-						+"order by 2 desc limit 5";
+		String query = "select t.country, sum(t.ads_requested) " + "from datawarehouse.fact_traffic_site t "
+				+ "where t.site_id in (" + siteIdList + ") "
+				+ "and date(t.start) >= date_sub(curdate(), interval 7 day) and date(t.start) < curdate() "
+				+ "group by 1 " + "order by 2 desc limit 5";
 
-		
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -1360,20 +1352,18 @@ public class DataAccess {
 		p.setNexCountryReqs(countries);
 
 	}
-	
+
 	public List<GenericObject> getGreenCountryReqs(String placementId) {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<GenericObject> countries = new ArrayList<GenericObject>();
 		String query = "select c.alpha_3, sum(r.views) "
-						+"from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c "
-						+"where r.placement_id = "+placementId+" "
-						+"and r.dayperiod >= datediff(curdate(), '1970-01-01')-7 and r.dayperiod < datediff(curdate(), '1970-01-01') "
-						+"and c.id = r.country_id "
-						+"group by 1 "
-						+"order by 2 desc limit 5";
-		
+				+ "from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c "
+				+ "where r.placement_id = " + placementId + " "
+				+ "and r.dayperiod >= datediff(curdate(), '1970-01-01')-7 and r.dayperiod < datediff(curdate(), '1970-01-01') "
+				+ "and c.id = r.country_id " + "group by 1 " + "order by 2 desc limit 5";
+
 		try {
 
 			conn = getConnection("mmedia");
@@ -1514,7 +1504,7 @@ public class DataAccess {
 			tagIdList = tagIdList.substring(0, tagIdList.length() - 1);
 		else
 			return sites;
-		
+
 		getNexCountryReqs(p, siteIdList);
 
 		String query = "select requests.date, requests.reqs, round(costs.rev, 0), requests.imps " + "from "
@@ -1528,7 +1518,7 @@ public class DataAccess {
 
 		try {
 
-			conn = getConnection("nex_dw");   
+			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
@@ -1623,17 +1613,15 @@ public class DataAccess {
 		return pubsMap;
 
 	}
-	
+
 	public float getGreenPubChurnRevenue(String pubId, int year, int month) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		float rev = 0;
-		String query = "select sum(r.costs) costs "
-						+"from mmedia.rollup_publisher_carrier_campaign_month_costs r "
-						+"where r.publisher_id = ? "
-						+"and year(adddate('1970-01-01', interval r.monthperiod month)) = ? "
-						+"and month(adddate('1970-01-01', interval r.monthperiod month)) = ?";
+		String query = "select sum(r.costs) costs " + "from mmedia.rollup_publisher_carrier_campaign_month_costs r "
+				+ "where r.publisher_id = ? " + "and year(adddate('1970-01-01', interval r.monthperiod month)) = ? "
+				+ "and month(adddate('1970-01-01', interval r.monthperiod month)) = ?";
 
 		try {
 
@@ -1678,23 +1666,17 @@ public class DataAccess {
 
 	}
 
-	
 	public Map<String, PublisherAccount> getNexPubFirstRequest() {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		Map<String, PublisherAccount> pubsMap = new HashMap<String, PublisherAccount>();
-		String query = "select * "
-						+"from "
-						+"(select c.pid, year(r.REVTSTMP), month(r.REVTSTMP), c.name "
-						+"from core.company_aud c, core.revinfo r "
-						+"where c.type = 'SELLER' "
-						+"and r.REV = c.REV "
-						+"order by 2,3) temp group by 1";
+		String query = "select * " + "from " + "(select c.pid, year(r.REVTSTMP), month(r.REVTSTMP), c.name "
+				+ "from core.company_aud c, core.revinfo r " + "where c.type = 'SELLER' " + "and r.REV = c.REV "
+				+ "order by 2,3) temp group by 1";
 
 		try {
 
-			
 			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -1748,7 +1730,6 @@ public class DataAccess {
 
 		try {
 
-			
 			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -1799,7 +1780,6 @@ public class DataAccess {
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -1859,7 +1839,6 @@ public class DataAccess {
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -1951,7 +1930,6 @@ public class DataAccess {
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2011,7 +1989,6 @@ public class DataAccess {
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2066,7 +2043,6 @@ public class DataAccess {
 			query = query + "limit 10";
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2113,13 +2089,11 @@ public class DataAccess {
 		ResultSet rs = null;
 		Map<String, String[]> tiers = new HashMap<String, String[]>();
 		String query = "select t.pid, p.name, tr.level+1, tt.tag_order "
-				+"from core.tag t, core.tier_tag tt, core.tier tr, core.position p "
-				+"where t.pid = tt.tag_pid "
-				+"and tr.pid = tt.tier_pid and p.pid = t.position_pid ";
+				+ "from core.tag t, core.tier_tag tt, core.tier tr, core.position p " + "where t.pid = tt.tag_pid "
+				+ "and tr.pid = tt.tier_pid and p.pid = t.position_pid ";
 
 		try {
 
-			
 			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2159,7 +2133,7 @@ public class DataAccess {
 
 		return tiers;
 	}
-	
+
 	public List<Site> getTierOptData() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -2167,22 +2141,20 @@ public class DataAccess {
 		Map<String, List<Placement>> sites = new HashMap<String, List<Placement>>();
 		List<Site> masterSitesList = new ArrayList<Site>();
 		Map<String, String[]> tagTiers = getTagTiers();
-		
+
 		String query = "select t.id, t.name, s.name, sum(f.revenue) rev, "
-						+"round(sum(f.revenue)/sum(f.ads_delivered)*1000, 2) ecpm, sum(f.ads_delivered) "
-						+"from datawarehouse.dim_tag t, datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f "
-						+"where s.id = t.site_id "
-						+"and f.tag_id = t.id "
-						+"and date(f.start) > date_sub(curdate(), interval 7 day) "
-						+"group by 1 having rev > 9.99 order by s.name";
+				+ "round(sum(f.revenue)/sum(f.ads_delivered)*1000, 2) ecpm, sum(f.ads_delivered) "
+				+ "from datawarehouse.dim_tag t, datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f "
+				+ "where s.id = t.site_id " + "and f.tag_id = t.id "
+				+ "and date(f.start) > date_sub(curdate(), interval 7 day) "
+				+ "group by 1 having rev > 9.99 order by s.name";
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
-			
+
 			while (rs.next()) {
 				String site = rs.getString(3);
 				Placement t = new Placement();
@@ -2191,44 +2163,44 @@ public class DataAccess {
 				t.setRev(rs.getDouble(4));
 				t.setAvgEcpm(rs.getFloat(5));
 				t.setTotalImpressions(rs.getInt(6));
-				if(tagTiers.containsKey(t.getPlacementId()))
+				if (tagTiers.containsKey(t.getPlacementId()))
 					site = site + "&&" + tagTiers.get(t.getPlacementId())[0];
-				
+
 				List<Placement> tags;
-				if(sites.containsKey(site)) {
+				if (sites.containsKey(site)) {
 					tags = sites.get(site);
 				} else {
 					tags = new ArrayList<Placement>();
 				}
-				
-				if(tagTiers.containsKey(t.getPlacementId())) {
+
+				if (tagTiers.containsKey(t.getPlacementId())) {
 					t.setTier(tagTiers.get(t.getPlacementId())[1]);
-					tags.add(t);			
+					tags.add(t);
 				}
 				sites.put(site, tags);
 			}
-			
+
 			Set<String> siteNames = sites.keySet();
-			
-			for(Iterator<String> i = siteNames.iterator(); i.hasNext(); ) {
+
+			for (Iterator<String> i = siteNames.iterator(); i.hasNext();) {
 				String sName = i.next();
-				if(sName.indexOf("&&") > 0) {
+				if (sName.indexOf("&&") > 0) {
 					Site site = new Site();
 					site.setSiteName(sName.substring(0, sName.indexOf("&&")));
 
 					Position pos = new Position();
-					pos.setPositionName(sName.substring(sName.indexOf("&&")+2, sName.length()));
+					pos.setPositionName(sName.substring(sName.indexOf("&&") + 2, sName.length()));
 
 					pos.setTagsList(sites.get(sName));
 					site.setPosition(pos);
-					
+
 					masterSitesList.add(site);
 				}
 			}
-			
+
 			masterSitesList = getTierErrors(masterSitesList);
 			masterSitesList = combineMasterList(masterSitesList);
-			
+
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
@@ -2257,14 +2229,14 @@ public class DataAccess {
 
 		return masterSitesList;
 	}
-	
+
 	private List<Site> combineMasterList(List<Site> sites) {
 		List<Site> sitesToReturn = new ArrayList<Site>();
 		Map<String, List<Position>> sitesMap = new HashMap<String, List<Position>>();
-		for(Iterator<Site> i = sites.iterator(); i.hasNext(); ) {
+		for (Iterator<Site> i = sites.iterator(); i.hasNext();) {
 			Site currSite = i.next();
 			String siteName = currSite.getSiteName();
-			if(!sitesMap.containsKey(siteName)) {
+			if (!sitesMap.containsKey(siteName)) {
 				List<Position> posList = new ArrayList<Position>();
 				posList.add(currSite.getPosition());
 				sitesMap.put(siteName, posList);
@@ -2274,26 +2246,26 @@ public class DataAccess {
 				sitesMap.put(siteName, posList);
 			}
 		}
-		
+
 		Set<String> siteKeys = sitesMap.keySet();
-		for(Iterator<String> i = siteKeys.iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = siteKeys.iterator(); i.hasNext();) {
 			String siteName = i.next();
 			Site s = new Site();
 			s.setSiteName(siteName);
 			s.setPositionsList(combinePositions(sitesMap.get(siteName)));
 			sitesToReturn.add(s);
 		}
-		
+
 		return sitesToReturn;
 	}
-	
+
 	private List<Position> combinePositions(List<Position> positions) {
 		List<Position> positionsToReturn = new ArrayList<Position>();
 		Map<String, List<Placement>> positionsMap = new HashMap<String, List<Placement>>();
-		for(Iterator<Position> i = positions.iterator(); i.hasNext(); ) {
+		for (Iterator<Position> i = positions.iterator(); i.hasNext();) {
 			Position currPos = i.next();
 			String posName = currPos.getPositionName();
-			if(!positionsMap.containsKey(posName)) {
+			if (!positionsMap.containsKey(posName)) {
 				List<Placement> tagsList = new ArrayList<Placement>();
 				tagsList.addAll(currPos.getTagsList());
 				positionsMap.put(posName, tagsList);
@@ -2303,77 +2275,74 @@ public class DataAccess {
 				positionsMap.put(posName, tagsList);
 			}
 		}
-		
+
 		Set<String> posKeys = positionsMap.keySet();
-		for(Iterator<String> i = posKeys.iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = posKeys.iterator(); i.hasNext();) {
 			String posName = i.next();
 			Position p = new Position();
 			p.setPositionName(posName);
 			p.setTagsList(positionsMap.get(posName));
 			positionsToReturn.add(p);
 		}
-		
+
 		return positionsToReturn;
 	}
-	
+
 	private List<Site> getTierErrors(List<Site> tags) {
 		List<Site> sitesToReturn = new ArrayList<Site>();
-		for(Iterator<Site> i = tags.iterator(); i.hasNext(); ) {
+		for (Iterator<Site> i = tags.iterator(); i.hasNext();) {
 			Site s = i.next();
 			Position p = s.getPosition();
-			List<Placement> tagsList = p.getTagsList(); 
+			List<Placement> tagsList = p.getTagsList();
 			Map<Integer, Float[]> tierMap = new TreeMap<Integer, Float[]>();
-			for(Iterator<Placement> j = tagsList.iterator(); j.hasNext(); ) {
-				Placement t = j.next(); 
+			for (Iterator<Placement> j = tagsList.iterator(); j.hasNext();) {
+				Placement t = j.next();
 				Float[] ecpms;
-				if(!tierMap.containsKey(Integer.parseInt(t.getTier()))) {
+				if (!tierMap.containsKey(Integer.parseInt(t.getTier()))) {
 					ecpms = new Float[2];
 					ecpms[0] = t.getAvgEcpm();
 					ecpms[1] = t.getAvgEcpm();
 					tierMap.put(Integer.parseInt(t.getTier()), ecpms);
 				} else {
 					ecpms = tierMap.get(Integer.parseInt(t.getTier()));
-					if(t.getAvgEcpm() < ecpms[0])
+					if (t.getAvgEcpm() < ecpms[0])
 						ecpms[0] = t.getAvgEcpm();
-					if(t.getAvgEcpm() > ecpms[1])
+					if (t.getAvgEcpm() > ecpms[1])
 						ecpms[1] = t.getAvgEcpm();
 					tierMap.put(Integer.parseInt(t.getTier()), ecpms);
 				}
-				
+
 				Integer tier = 1;
 				Integer nextTier = tier + 1;
-				while(tierMap.containsKey(tier) && tierMap.containsKey(nextTier)) {		
+				while (tierMap.containsKey(tier) && tierMap.containsKey(nextTier)) {
 					Float[] tierEcpms = tierMap.get(tier);
 					Float[] nextTierEcpms = tierMap.get(nextTier);
-					if(nextTierEcpms[1] > tierEcpms[0]) {
+					if (nextTierEcpms[1] > tierEcpms[0]) {
 						s.setTierErrorFlag(true);
 						sitesToReturn.add(s);
 					}
-					
+
 					tier = tier + 1;
 					nextTier = tier + 1;
 				}
-						
+
 			}
-			
-			/*Integer tier = 1;
-			Integer nextTier = tier + 1;
-			while(tierMap.containsKey(tier) && tierMap.containsKey(nextTier)) {		
-				Float[] tierEcpms = tierMap.get(tier);
-				Float[] nextTierEcpms = tierMap.get(nextTier);
-				if(nextTierEcpms[1] > tierEcpms[0] && !s.isTierErrorFlag()) {
-					s.setTierErrorFlag(true);
-					sitesToReturn.add(s);
-				}
-				
-				tier = tier + 1;
-				nextTier = tier + 1;
-			}*/
-			
+
+			/*
+			 * Integer tier = 1; Integer nextTier = tier + 1;
+			 * while(tierMap.containsKey(tier) && tierMap.containsKey(nextTier))
+			 * { Float[] tierEcpms = tierMap.get(tier); Float[] nextTierEcpms =
+			 * tierMap.get(nextTier); if(nextTierEcpms[1] > tierEcpms[0] &&
+			 * !s.isTierErrorFlag()) { s.setTierErrorFlag(true);
+			 * sitesToReturn.add(s); }
+			 * 
+			 * tier = tier + 1; nextTier = tier + 1; }
+			 */
+
 		}
-		
+
 		return sitesToReturn;
-		
+
 	}
 
 	public List<Site> getSitesWithMultipleAuctions(String dateRange) {
@@ -2398,7 +2367,6 @@ public class DataAccess {
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2445,7 +2413,7 @@ public class DataAccess {
 		return sites;
 
 	}
-	
+
 	public String getNexPubName(String id) {
 
 		Connection conn = null;
@@ -2456,7 +2424,6 @@ public class DataAccess {
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, id);
@@ -2495,7 +2462,7 @@ public class DataAccess {
 		return name;
 
 	}
-	
+
 	public String getGreenPubName(String id) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -2543,7 +2510,7 @@ public class DataAccess {
 		return name;
 
 	}
-	
+
 	public List<Site> getOOSitesMTD() {
 
 		Connection conn = null;
@@ -2551,26 +2518,20 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Site> sitesList = new ArrayList<Site>();
 		String query = "select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
-						+"sum(f.ads_clicked), sum(f.revenue) rev "
-						+"from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
-						+"where s.name like '%aol%' "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= date_format(now(), '%Y-%m-01') "
-						+"and t.id = f.source_type "
-						+"group by 1,3 having rev > 0 "
-						+"union "
-						+"select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
-						+"sum(f.ads_clicked), sum(f.revenue) rev "
-						+"from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
-						+"where s.name like '%verizon%' "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= date_format(now(), '%Y-%m-01') "
-						+"and t.id = f.source_type "
-						+"group by 1,3 having rev > 0 ";
+				+ "sum(f.ads_clicked), sum(f.revenue) rev "
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+				+ "where s.name like '%aol%' " + "and f.site_id = s.id "
+				+ "and date(f.start) >= date_format(now(), '%Y-%m-01') " + "and t.id = f.source_type "
+				+ "group by 1,3 having rev > 0 " + "union "
+				+ "select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
+				+ "sum(f.ads_clicked), sum(f.revenue) rev "
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+				+ "where s.name like '%verizon%' " + "and f.site_id = s.id "
+				+ "and date(f.start) >= date_format(now(), '%Y-%m-01') " + "and t.id = f.source_type "
+				+ "group by 1,3 having rev > 0 ";
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2617,7 +2578,7 @@ public class DataAccess {
 		return sitesList;
 
 	}
-	
+
 	public List<Site> getOOSitesLastMTD() {
 
 		Connection conn = null;
@@ -2625,26 +2586,20 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Site> sitesList = new ArrayList<Site>();
 		String query = "select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
-						+"sum(f.ads_clicked), sum(f.revenue) rev "
-						+"from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
-						+"where s.name like '%aol%' "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 month)) and date(f.start) <= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 day)) "
-						+"and t.id = f.source_type "
-						+"group by 1,3 having rev > 0 "
-						+"union "
-						+"select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
-						+"sum(f.ads_clicked), sum(f.revenue) rev "
-						+"from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
-						+"where s.name like '%verizon%' "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 month)) and date(f.start) <= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 day)) "
-						+"and t.id = f.source_type "
-						+"group by 1,3 having rev > 0 ";
+				+ "sum(f.ads_clicked), sum(f.revenue) rev "
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+				+ "where s.name like '%aol%' " + "and f.site_id = s.id "
+				+ "and date(f.start) >= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 month)) and date(f.start) <= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 day)) "
+				+ "and t.id = f.source_type " + "group by 1,3 having rev > 0 " + "union "
+				+ "select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
+				+ "sum(f.ads_clicked), sum(f.revenue) rev "
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+				+ "where s.name like '%verizon%' " + "and f.site_id = s.id "
+				+ "and date(f.start) >= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 month)) and date(f.start) <= date(date_sub(date_format(now(), '%Y-%m-01'), interval 1 day)) "
+				+ "and t.id = f.source_type " + "group by 1,3 having rev > 0 ";
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2691,7 +2646,7 @@ public class DataAccess {
 		return sitesList;
 
 	}
-	
+
 	public List<Site> getTagsMTD(String siteId) {
 
 		Connection conn = null;
@@ -2699,18 +2654,14 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Site> tagsList = new ArrayList<Site>();
 		String query = "select s.id, s.name, t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered),  "
-						+"sum(f.ads_clicked), sum(f.revenue) rev "
-						+"from datawarehouse.dim_tag s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
-						+"where s.site_id = " + siteId + " "
-						+"and f.tag_id = s.id "
-						+"and date(f.start) >= date_format(now(), '%Y-%m-01') "
-						+"and t.id = f.source_type "
-						+"group by 1,3 having rev > 0 "
-						+"order by rev desc";
+				+ "sum(f.ads_clicked), sum(f.revenue) rev "
+				+ "from datawarehouse.dim_tag s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+				+ "where s.site_id = " + siteId + " " + "and f.tag_id = s.id "
+				+ "and date(f.start) >= date_format(now(), '%Y-%m-01') " + "and t.id = f.source_type "
+				+ "group by 1,3 having rev > 0 " + "order by rev desc";
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2757,7 +2708,7 @@ public class DataAccess {
 		return tagsList;
 
 	}
-	
+
 	public List<Site> getOOSiteDaily(String siteId) {
 
 		Connection conn = null;
@@ -2765,17 +2716,13 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Site> sitesList = new ArrayList<Site>();
 		String query = "select s.id, s.name, date(f.start), t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered), sum(f.ads_clicked), sum(f.revenue) rev "
-						+"from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
-						+"where s.id = "+siteId+" "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= date_format(now(), '%Y-%m-01') "
-						+"and t.id = f.source_type "
-						+"group by 1,3,4 having rev > 0 "
-						+"order by 3";
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+				+ "where s.id = " + siteId + " " + "and f.site_id = s.id "
+				+ "and date(f.start) >= date_format(now(), '%Y-%m-01') " + "and t.id = f.source_type "
+				+ "group by 1,3,4 having rev > 0 " + "order by 3";
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2823,7 +2770,7 @@ public class DataAccess {
 		return sitesList;
 
 	}
-	
+
 	public List<Site> getOOTagDaily(String tagId) {
 
 		Connection conn = null;
@@ -2831,17 +2778,13 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Site> sitesList = new ArrayList<Site>();
 		String query = "select s.id, s.name, date(f.start), t.name, sum(f.ads_requested_adnet), sum(f.ads_served), sum(f.ads_delivered), sum(f.ads_clicked), sum(f.revenue) rev "
-						+"from datawarehouse.dim_tag s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
-						+"where s.id = "+tagId+" "
-						+"and f.tag_id = s.id "
-						+"and date(f.start) >= date_format(now(), '%Y-%m-01') "
-						+"and t.id = f.source_type "
-						+"group by 1,3,4 having rev > 0 "
-						+"order by 3";
+				+ "from datawarehouse.dim_tag s, datawarehouse.fact_revenue_adnet f, datawarehouse.dim_ad_source_type t "
+				+ "where s.id = " + tagId + " " + "and f.tag_id = s.id "
+				+ "and date(f.start) >= date_format(now(), '%Y-%m-01') " + "and t.id = f.source_type "
+				+ "group by 1,3,4 having rev > 0 " + "order by 3";
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2889,26 +2832,21 @@ public class DataAccess {
 		return sitesList;
 
 	}
-	
+
 	public List<Site> getNewTags() {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Site> sitesList = new ArrayList<Site>();
-		String query = "select temp.tagName, temp.siteName, temp.firstDate "
-						+"from "
-						+"(select t.name tagName, s.name siteName, date(min(t.updated_on)) firstDate "
-						+"from core.tag_aud t, core.site s "
-						+"where t.site_pid = s.pid "
-						+"and t.name not like 'Z-TEST%' "
-						+"group by 1) temp "
-						+"where temp.firstDate > date_sub(curdate(), interval 7 day) "
-						+"order by temp.firstdate";
+		String query = "select temp.tagName, temp.siteName, temp.firstDate " + "from "
+				+ "(select t.name tagName, s.name siteName, date(min(t.updated_on)) firstDate "
+				+ "from core.tag_aud t, core.site s " + "where t.site_pid = s.pid " + "and t.name not like 'Z-TEST%' "
+				+ "group by 1) temp " + "where temp.firstDate > date_sub(curdate(), interval 7 day) "
+				+ "order by temp.firstdate";
 
 		try {
 
-			
 			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -2950,32 +2888,22 @@ public class DataAccess {
 		return sitesList;
 
 	}
-	
+
 	public List<AdQuality> getAdQualityData() {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<AdQuality> biddersList = new ArrayList<AdQuality>();
-		String query = "select v.name, v.count, u.count "
-						+"from "
-						+"(select c.name, count(cv.status) count "
-						+"from core.company c, core.creative_verification cv "
-						+"where c.type = 'BUYER' "
-						+"and cv.buyer_pid = c.pid "
-						+"and cv.status = 1 "
-						+"group by 1) v, "
-						+"(select c.name, count(cv.status) count "
-						+"from core.company c, core.creative_verification cv "
-						+"where c.type = 'BUYER' "
-						+"and cv.buyer_pid = c.pid "
-						+"and cv.status = 2 "
-						+"group by 1) u "
-						+"where v.name = u.name";
+		String query = "select v.name, v.count, u.count " + "from " + "(select c.name, count(cv.status) count "
+				+ "from core.company c, core.creative_verification cv " + "where c.type = 'BUYER' "
+				+ "and cv.buyer_pid = c.pid " + "and cv.status = 1 " + "group by 1) v, "
+				+ "(select c.name, count(cv.status) count " + "from core.company c, core.creative_verification cv "
+				+ "where c.type = 'BUYER' " + "and cv.buyer_pid = c.pid " + "and cv.status = 2 " + "group by 1) u "
+				+ "where v.name = u.name";
 
 		try {
 
-			
 			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -3017,32 +2945,24 @@ public class DataAccess {
 		return biddersList;
 
 	}
-	
+
 	public List<AdQuality> getBidderDailyData(String bidder) {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<AdQuality> biddersList = new ArrayList<AdQuality>();
-		String query = "select v.date, v.count, u.count, v.seen, u.seen "
-						+"from "
-						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
-						+"from core.company c, core.creative_verification cv "
-						+"where c.name = '"+bidder+"' "
-						+"and cv.buyer_pid = c.pid "
-						+"and cv.status = 1 "
-						+"group by 1) v left outer join "
-						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
-						+"from core.company c, core.creative_verification cv "
-						+"where c.name = '"+bidder+"' "
-						+"and cv.buyer_pid = c.pid "
-						+"and cv.status = 2 "
-						+"group by 1) u on v.date = u.date "
-						+"order by v.date desc limit 30";
+		String query = "select v.date, v.count, u.count, v.seen, u.seen " + "from "
+				+ "(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
+				+ "from core.company c, core.creative_verification cv " + "where c.name = '" + bidder + "' "
+				+ "and cv.buyer_pid = c.pid " + "and cv.status = 1 " + "group by 1) v left outer join "
+				+ "(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
+				+ "from core.company c, core.creative_verification cv " + "where c.name = '" + bidder + "' "
+				+ "and cv.buyer_pid = c.pid " + "and cv.status = 2 " + "group by 1) u on v.date = u.date "
+				+ "order by v.date desc limit 30";
 
 		try {
 
-			
 			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -3082,35 +3002,30 @@ public class DataAccess {
 			}
 
 		}
-		
+
 		Collections.sort(biddersList, AdQuality.COMPARE_BY_DATE_ASC);
 		return biddersList;
 
 	}
-	
+
 	public List<Daily> getAdQualityDailyData() {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Daily> dailyData = new ArrayList<Daily>();
-		String query = "select v.date, v.count, u.count, v.seen, u.seen "
-						+"from "
-						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
-						+"from core.creative_verification cv "
-						+"where date(cv.last_update) >= date_sub(curdate(), interval 30 day) "
-						+"and cv.status = 1 "
-						+"group by 1) v, "
-						+"(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
-						+"from core.creative_verification cv "
-						+"where date(cv.last_update) >= date_sub(curdate(), interval 30 day) "
-						+"and cv.status = 2 "
-						+"group by 1) u "
-						+"where v.date = u.date";
+		String query = "select v.date, v.count, u.count, v.seen, u.seen " + "from "
+				+ "(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
+				+ "from core.creative_verification cv "
+				+ "where date(cv.last_update) >= date_sub(curdate(), interval 30 day) " + "and cv.status = 1 "
+				+ "group by 1) v, "
+				+ "(select date(cv.last_update) date, count(cv.status) count, sum(cv.seen_count) seen "
+				+ "from core.creative_verification cv "
+				+ "where date(cv.last_update) >= date_sub(curdate(), interval 30 day) " + "and cv.status = 2 "
+				+ "group by 1) u " + "where v.date = u.date";
 
 		try {
 
-			
 			conn = getConnection("nex_core");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -3154,7 +3069,7 @@ public class DataAccess {
 		return dailyData;
 
 	}
-	
+
 	public List<Daily> getNativeData() {
 
 		Connection conn = null;
@@ -3162,18 +3077,14 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Daily> dailyData = new ArrayList<Daily>();
 		String query = "select DATE(a11.start) NX_FACTREVENUEADNETDATE, "
-						+ "sum(a11.ads_requested_site) NXINBOUNDREQUESTS, sum(a11.revenue) NXREVENUE "
-						+"from datawarehouse.fact_revenue_adnet a11 join datawarehouse.dim_position a12 "
-						+ "on (a11.site_id = a12.site_id and a11.zone = a12.name) "
-						+"where a12.video_support in (3) "
-						+"and DATE(a11.start) >= date_sub(curdate(), interval 30 day) "
-						+"and a11.tag_monetization in (-1, 1) "
-						+"group by 1 "
-						+"order by 1";
+				+ "sum(a11.ads_requested_site) NXINBOUNDREQUESTS, sum(a11.revenue) NXREVENUE "
+				+ "from datawarehouse.fact_revenue_adnet a11 join datawarehouse.dim_position a12 "
+				+ "on (a11.site_id = a12.site_id and a11.zone = a12.name) " + "where a12.video_support in (3) "
+				+ "and DATE(a11.start) >= date_sub(curdate(), interval 30 day) "
+				+ "and a11.tag_monetization in (-1, 1) " + "group by 1 " + "order by 1";
 
 		try {
 
-			
 			conn = getConnection("nex_dw");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
@@ -3217,7 +3128,7 @@ public class DataAccess {
 		return dailyData;
 
 	}
-	
+
 	public List<Bidder> getNativeDemandData() {
 
 		Connection conn = null;
@@ -3225,15 +3136,10 @@ public class DataAccess {
 		ResultSet rs = null;
 		List<Bidder> bidders = new ArrayList<Bidder>();
 		String query = "select b.name, sum(f.ads_served) NXRTBSERVED, sum(f.ads_delivered) NXRTBVIEWS, sum(f.revenue) NXRTBREVENUE "
-+"from datawarehouse.fact_exchange_wins	f "
-+"join datawarehouse.dim_position	p "
-+"on (f.site_id = p.site_id and f.zone = p.name) "
-+"join dim_bidder	b "
-+"on (f.bidder_id = b.id) "
-+"where (p.video_support in (3) "
-+"and DATE(f.start) >=  date_sub(curdate(), interval 30 day)) "
-+"group by 1 "
-+"order by 4 desc";
+				+ "from datawarehouse.fact_exchange_wins	f " + "join datawarehouse.dim_position	p "
+				+ "on (f.site_id = p.site_id and f.zone = p.name) " + "join dim_bidder	b " + "on (f.bidder_id = b.id) "
+				+ "where (p.video_support in (3) " + "and DATE(f.start) >=  date_sub(curdate(), interval 30 day)) "
+				+ "group by 1 " + "order by 4 desc";
 
 		try {
 
@@ -3279,7 +3185,7 @@ public class DataAccess {
 		return bidders;
 
 	}
-	
+
 	public List<Viewability> getViewabilityData(String path) throws IOException {
 
 		Connection conn = null;
@@ -3319,7 +3225,7 @@ public class DataAccess {
 				v.setPlatform("Exchange");
 				sitesList.add(v);
 			}
-			
+
 			getNetworkViewabilityData(path, sitesList);
 
 		} catch (Exception ex) {
@@ -3351,7 +3257,7 @@ public class DataAccess {
 		return sitesList;
 
 	}
-	
+
 	public List<Viewability> getNetworkViewabilityData(String path, List<Viewability> sitesList) throws IOException {
 
 		Connection conn = null;
@@ -3361,7 +3267,7 @@ public class DataAccess {
 		String query = "select * from Jarvis.Network_Viewability";
 		ExcelHelper eh = new ExcelHelper(path);
 		Map<String, String> ams = eh.readPubAMs();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3423,7 +3329,7 @@ public class DataAccess {
 		return sitesList;
 
 	}
-	
+
 	public Map<String, String[]> getNexSites() {
 
 		Connection conn = null;
@@ -3431,13 +3337,11 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select s.id, s.alias, case when sz.dimensions = '300x50 Flex' then '320x50' else sz.dimensions end "
-						+"from tapmatch31.PASite s, tapmatch31.AdSpot t, tapmatch31.AdSize sz "
-						+"where s.alias like 'nex_%' "
-						+"and t.id = s.defaultAdSpotId "
-						+"and sz.id = t.adSize";
-		
+				+ "from tapmatch31.PASite s, tapmatch31.AdSpot t, tapmatch31.AdSize sz " + "where s.alias like 'nex_%' "
+				+ "and t.id = s.defaultAdSpotId " + "and sz.id = t.adSize";
+
 		Map<String, String[]> nexSites = new HashMap<String, String[]>();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3481,24 +3385,19 @@ public class DataAccess {
 		return nexSites;
 
 	}
-	
+
 	public Map<String, String[]> getNexSitesData() {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
-		String query = "select s.pid, c.name, s.name, "
-						+"case "
-						+"when s.platform like 'ANDROID%' then 'Android' "
-						+"when s.platform like 'OTHER' then 'Mobile Web' "
-						+"else 'iOS' "
-						+"end "
-						+"from core.site s, core.company c "
-						+"where c.pid = s.company_pid";
+		String query = "select s.pid, c.name, s.name, " + "case " + "when s.platform like 'ANDROID%' then 'Android' "
+				+ "when s.platform like 'OTHER' then 'Mobile Web' " + "else 'iOS' " + "end "
+				+ "from core.site s, core.company c " + "where c.pid = s.company_pid";
 
 		Map<String, String[]> nexSites = new HashMap<String, String[]>();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3543,7 +3442,7 @@ public class DataAccess {
 		return nexSites;
 
 	}
-	
+
 	public Map<String, String> getNexDailyAvails() {
 
 		Connection conn = null;
@@ -3551,13 +3450,12 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select s.id, round(sum(ads_requested)/3, 0) "
-						+"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site t "
-						+"where t.site_id = s.id "
-						+"and date(t.start) >= date_sub(curdate(), interval 3 day) and date(t.start) < curdate() "
-						+"group by 1";
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_traffic_site t " + "where t.site_id = s.id "
+				+ "and date(t.start) >= date_sub(curdate(), interval 3 day) and date(t.start) < curdate() "
+				+ "group by 1";
 
 		Map<String, String> nexAvails = new HashMap<String, String>();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3598,7 +3496,7 @@ public class DataAccess {
 		return nexAvails;
 
 	}
-	
+
 	public Map<String, Map<String, String>> getNexDelivered() {
 
 		Connection conn = null;
@@ -3606,14 +3504,12 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select s.id, date(t.start), sum(ads_displayed) "
-						+"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site t "
-						+"where t.site_id = s.id "
-						+"and date(t.start) >= date_sub(curdate(), interval 15 day) "
-						+"group by 1,2 order by 1";
-		
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_traffic_site t " + "where t.site_id = s.id "
+				+ "and date(t.start) >= '2016-07-08' and date(t.start) <= '2016-07-14' " + "group by 1,2 order by 1";
+
 		Map<String, String> dateValues;
 		Map<String, Map<String, String>> siteValues = new HashMap<String, Map<String, String>>();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3625,7 +3521,7 @@ public class DataAccess {
 				String siteId = rs.getString(1);
 				String date = rs.getString(2);
 				String imps = rs.getString(3);
-				if(!siteValues.containsKey(siteId)) {
+				if (!siteValues.containsKey(siteId)) {
 					dateValues = new HashMap<String, String>();
 					dateValues.put(date, imps);
 					siteValues.put(siteId, dateValues);
@@ -3666,34 +3562,90 @@ public class DataAccess {
 
 	}
 	
+	public Map<String, Map<String, String>> getMydasDelivered() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "";
+
+		Map<String, String> dateValues;
+		Map<String, Map<String, String>> siteValues = new HashMap<String, Map<String, String>>();
+
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("nex_dw");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				String siteId = rs.getString(1);
+				String date = rs.getString(2);
+				String imps = rs.getString(3);
+				if (!siteValues.containsKey(siteId)) {
+					dateValues = new HashMap<String, String>();
+					dateValues.put(date, imps);
+					siteValues.put(siteId, dateValues);
+				} else {
+					dateValues = siteValues.get(siteId);
+					dateValues.put(date, imps);
+					siteValues.put(siteId, dateValues);
+				}
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return siteValues;
+
+	}
+
 	public List<GenericObject> getRequests() {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
-		String query = "select vid.country, fsi.reqs, vid.reqs "
-+"from "
-+"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
-+"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
-+"where s.company_id = 17551 "
-+"and f.site_id = s.id "
-+"and f.start >= '2016-07-15' and f.start < '2016-10-01' "
-+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-+"and f.zone like '%video%' "
-+"group by 1) vid left outer join  "
-+"(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
-+"from datawarehouse.dim_site s, datawarehouse.fact_traffic_site f "
-+"where s.company_id = 17551 "
-+"and f.site_id = s.id "
-+"and f.start >= '2016-07-15' and f.start < '2016-10-01' "
-+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-+"and f.zone like '%interstitial%' "
-+"group by 1) fsi on vid.country = fsi.country";
-		
+		String query = "select vid.country, fsi.reqs, vid.reqs " + "from "
+				+ "(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_traffic_site f " + "where s.company_id = 17551 "
+				+ "and f.site_id = s.id " + "and f.start >= '2016-07-15' and f.start < '2016-10-01' "
+				+ "and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') " + "and f.zone like '%video%' "
+				+ "group by 1) vid left outer join  "
+				+ "(select f.country, round(sum(f.ads_requested)/datediff(curdate(), '2016-07-14')*30, 0) reqs "
+				+ "from datawarehouse.dim_site s, datawarehouse.fact_traffic_site f " + "where s.company_id = 17551 "
+				+ "and f.site_id = s.id " + "and f.start >= '2016-07-15' and f.start < '2016-10-01' "
+				+ "and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') " + "and f.zone like '%interstitial%' "
+				+ "group by 1) fsi on vid.country = fsi.country";
+
 		List<GenericObject> countryReqs = new ArrayList<GenericObject>();
 		Map<String, String[]> mydasReqs = getMydasRequests();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3708,37 +3660,37 @@ public class DataAccess {
 				reqs[0] = rs.getString(2);
 				reqs[1] = rs.getString(3);
 				o.setValues(reqs);
-				if(o.getAttribute().equals("USA")) {
+				if (o.getAttribute().equals("USA")) {
 					reqs[2] = "7500000";
 					reqs[3] = "22500000";
 					reqs[4] = mydasReqs.get("USA")[0];
 					reqs[5] = mydasReqs.get("USA")[1];
-				} else if(o.getAttribute().equals("GBR")) {
+				} else if (o.getAttribute().equals("GBR")) {
 					reqs[2] = "6000000";
 					reqs[3] = "12000000";
 					reqs[4] = mydasReqs.get("GBR")[0];
 					reqs[5] = mydasReqs.get("GBR")[1];
-				} else if(o.getAttribute().equals("CAN")) {
+				} else if (o.getAttribute().equals("CAN")) {
 					reqs[2] = "6000000";
 					reqs[3] = "12000000";
 					reqs[4] = mydasReqs.get("CAN")[0];
 					reqs[5] = mydasReqs.get("CAN")[1];
-				} else if(o.getAttribute().equals("DEU")) {
+				} else if (o.getAttribute().equals("DEU")) {
 					reqs[2] = "3000000";
 					reqs[3] = "9000000";
 					reqs[4] = mydasReqs.get("DEU")[0];
 					reqs[5] = mydasReqs.get("DEU")[1];
-				} else if(o.getAttribute().equals("FRA")) {
+				} else if (o.getAttribute().equals("FRA")) {
 					reqs[2] = "3000000";
 					reqs[3] = "9000000";
 					reqs[4] = mydasReqs.get("FRA")[0];
 					reqs[5] = mydasReqs.get("FRA")[1];
-				} else if(o.getAttribute().equals("AUS")) {
+				} else if (o.getAttribute().equals("AUS")) {
 					reqs[2] = "1500000";
 					reqs[3] = "4500000";
 					reqs[4] = mydasReqs.get("AUS")[0];
 					reqs[5] = mydasReqs.get("AUS")[1];
-				} else if(o.getAttribute().equals("JPN")) {
+				} else if (o.getAttribute().equals("JPN")) {
 					reqs[2] = "1500000";
 					reqs[3] = "4500000";
 					reqs[4] = mydasReqs.get("JPN")[0];
@@ -3776,7 +3728,7 @@ public class DataAccess {
 		return countryReqs;
 
 	}
-	
+
 	public String[] getRevenue() {
 
 		Connection conn = null;
@@ -3784,15 +3736,13 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select sum(revenue) rev, sum(revenue)-sum(revenue_net) pubrev, (sum(revenue)-sum(revenue_net))/datediff(curdate(), '2016-07-14')*78 projrev "
-						+"from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_exchange_wins f "
-						+"where c.name = 'Mobilityware' "
-						+"and s.company_id = c.id "
-						+"and f.site_id = s.id "
-						+"and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
-						+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN')";
-		
+				+ "from datawarehouse.dim_company c, datawarehouse.dim_site s, datawarehouse.fact_exchange_wins f "
+				+ "where c.name = 'Mobilityware' " + "and s.company_id = c.id " + "and f.site_id = s.id "
+				+ "and date(f.start) >= '2016-07-15' and date(f.start) <= '2016-09-30' "
+				+ "and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN')";
+
 		String[] revNumbers = new String[7];
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3806,7 +3756,7 @@ public class DataAccess {
 				revNumbers[2] = rs.getString(3);
 				revNumbers[6] = "100000";
 			}
-			
+
 			getMydasRevenue(revNumbers);
 
 		} catch (Exception ex) {
@@ -3838,7 +3788,7 @@ public class DataAccess {
 		return revNumbers;
 
 	}
-	
+
 	public void getMydasRevenue(String[] revNumbers) {
 
 		Connection conn = null;
@@ -3846,14 +3796,11 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select sum(r.costs), sum(r.costs)*0.7, (sum(r.costs)*0.7)/datediff(curdate(), '2016-07-14')*78 "
-						+"from mmedia.rollup_site_country_campaign_day_costs r, mmedia.countries c, mmedia.sites s "
-						+"where s.publisherid = 4411 "
-						+"and r.site_id = s.id "
-						+"and adddate('1970-01-01', interval r.dayperiod day) >= '2016-07-15' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-08-04' "
-						+"and c.id = r.country_id "
-						+"and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN')";
-		
-		
+				+ "from mmedia.rollup_site_country_campaign_day_costs r, mmedia.countries c, mmedia.sites s "
+				+ "where s.publisherid = 4411 " + "and r.site_id = s.id "
+				+ "and adddate('1970-01-01', interval r.dayperiod day) >= '2016-07-15' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-08-04' "
+				+ "and c.id = r.country_id " + "and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN')";
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3893,40 +3840,30 @@ public class DataAccess {
 
 		}
 
-
 	}
-	
+
 	public Map<String, String[]> getMydasRequests() {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
-		String query = "select vid.alpha_3, vid.reqs, fsi.reqs "
-						+"from (select c.alpha_3, sum(r.views) reqs "
-						+"from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c, mmedia.sites s, mmedia.placements p "
-						+"where s.publisherid = 4411 "
-						+"and p.siteid = s.id "
-						+"and p.name like '%VIDEO' "
-						+"and r.placement_id = p.id "
-						+"and adddate('1970-01-01', interval r.dayperiod day) >= '2016-08-01' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-09-30' "
-						+"and c.id = r.country_id "
-						+"and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-						+"group by 1) vid, "
-						+"(select c.alpha_3, sum(r.views) reqs "
-						+"from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c, mmedia.sites s, mmedia.placements p "
-						+"where s.publisherid = 4411 "
-						+"and p.siteid = s.id "
-						+"and p.name like '%STATIC' "
-						+"and r.placement_id = p.id "
-						+"and adddate('1970-01-01', interval r.dayperiod day) >= '2016-08-01' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-09-30' "
-						+"and c.id = r.country_id "
-						+"and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-						+"group by 1) fsi "
-						+"where vid.alpha_3 = fsi.alpha_3";
-		
+		String query = "select vid.alpha_3, vid.reqs, fsi.reqs " + "from (select c.alpha_3, sum(r.views) reqs "
+				+ "from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c, mmedia.sites s, mmedia.placements p "
+				+ "where s.publisherid = 4411 " + "and p.siteid = s.id " + "and p.name like '%VIDEO' "
+				+ "and r.placement_id = p.id "
+				+ "and adddate('1970-01-01', interval r.dayperiod day) >= '2016-08-01' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-09-30' "
+				+ "and c.id = r.country_id " + "and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+				+ "group by 1) vid, " + "(select c.alpha_3, sum(r.views) reqs "
+				+ "from mmedia.rollup_country_placement_handset_day_activity r, mmedia.countries c, mmedia.sites s, mmedia.placements p "
+				+ "where s.publisherid = 4411 " + "and p.siteid = s.id " + "and p.name like '%STATIC' "
+				+ "and r.placement_id = p.id "
+				+ "and adddate('1970-01-01', interval r.dayperiod day) >= '2016-08-01' and adddate('1970-01-01', interval r.dayperiod day) <= '2016-09-30' "
+				+ "and c.id = r.country_id " + "and c.alpha_3 in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
+				+ "group by 1) fsi " + "where vid.alpha_3 = fsi.alpha_3";
+
 		Map<String, String[]> countryReqs = new HashMap<String, String[]>();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -3970,34 +3907,91 @@ public class DataAccess {
 		return countryReqs;
 
 	}
-	
+
+	public Map<String, String[]> getMydasSites() {
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		String query = "select pl.id, pl.name, s.name, p.name, at.description, " + "case "
+				+ "when s.website like '%itunes.apple.com%' then 'iOS' "
+				+ "when s.website like '%play.google.com%' then 'Android' " + "else 'Mobile Web' " + "end os "
+				+ "from mmedia.placements pl, mmedia.sites s, mmedia.publishers p, mmedia.ad_types at "
+				+ "where s.id = pl.siteid " + "and p.id = s.publisherid "
+				+ "and p.name not like 'MM Error Publisher' and at.id = pl.adtypeid";
+
+		Map<String, String[]> mydasSites = new HashMap<String, String[]>();
+
+		try {
+
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = getConnection("mmedia");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				String[] names = new String[5];
+				names[0] = rs.getString(2);
+				names[1] = rs.getString(3);
+				names[2] = rs.getString(4);
+				names[3] = rs.getString(5);
+				names[4] = rs.getString(6);
+				mydasSites.put(rs.getString(1), names);
+			}
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+
+		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				rs = null;
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqlEx) {
+				}
+
+				stmt = null;
+			}
+
+		}
+
+		return mydasSites;
+
+	}
+
 	public List<GenericObject> getEcpm() {
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
-		String query = "select vid.country, vid.ecpm, vid.pubecpm, fsi.ecpm, fsi.pubecpm "
-+"from "
-+"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
-+"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
-+"from datawarehouse.fact_revenue_adnet f "
-+"where f.publisher_id = 17551 "
-+"and f.start >= '2016-07-15' and f.start <= '2016-10-01' "
-+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-+"and f.zone like '%video%' "
-+"group by 1) vid left outer join  "
-+"(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
-+"(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
-+"from datawarehouse.fact_revenue_adnet f "
-+"where f.publisher_id = 17551 "
-+"and f.start >= '2016-07-15' and f.start <= '2016-10-01' "
-+"and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') "
-+"and f.zone like '%interstitial%' "
-+"group by 1) fsi on vid.country = fsi.country";
-		
+		String query = "select vid.country, vid.ecpm, vid.pubecpm, fsi.ecpm, fsi.pubecpm " + "from "
+				+ "(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
+				+ "(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
+				+ "from datawarehouse.fact_revenue_adnet f " + "where f.publisher_id = 17551 "
+				+ "and f.start >= '2016-07-15' and f.start <= '2016-10-01' "
+				+ "and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') " + "and f.zone like '%video%' "
+				+ "group by 1) vid left outer join  "
+				+ "(select f.country, sum(revenue)/sum(ads_delivered)*1000 ecpm,  "
+				+ "(sum(revenue)-sum(revenue_net))/sum(ads_delivered)*1000 pubecpm "
+				+ "from datawarehouse.fact_revenue_adnet f " + "where f.publisher_id = 17551 "
+				+ "and f.start >= '2016-07-15' and f.start <= '2016-10-01' "
+				+ "and f.country in ('USA','GBR','CAN','DEU','FRA','AUS','JPN') " + "and f.zone like '%interstitial%' "
+				+ "group by 1) fsi on vid.country = fsi.country";
+
 		List<GenericObject> countryReqs = new ArrayList<GenericObject>();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -4013,25 +4007,25 @@ public class DataAccess {
 				ecpm[1] = rs.getString(3);
 				ecpm[2] = rs.getString(4);
 				ecpm[3] = rs.getString(5);
-				if(o.getAttribute().equals("USA")) {
+				if (o.getAttribute().equals("USA")) {
 					ecpm[4] = "7.50";
 					ecpm[5] = "5.00";
-				} else if(o.getAttribute().equals("GBR")) {
+				} else if (o.getAttribute().equals("GBR")) {
 					ecpm[4] = "7.50";
 					ecpm[5] = "5.00";
-				} else if(o.getAttribute().equals("CAN")) {
+				} else if (o.getAttribute().equals("CAN")) {
 					ecpm[4] = "7.50";
 					ecpm[5] = "5.00";
-				} else if(o.getAttribute().equals("DEU")) {
+				} else if (o.getAttribute().equals("DEU")) {
 					ecpm[4] = "7.50";
 					ecpm[5] = "4.00";
-				} else if(o.getAttribute().equals("FRA")) {
+				} else if (o.getAttribute().equals("FRA")) {
 					ecpm[4] = "7.50";
 					ecpm[5] = "4.00";
-				} else if(o.getAttribute().equals("AUS")) {
+				} else if (o.getAttribute().equals("AUS")) {
 					ecpm[4] = "7.50";
 					ecpm[5] = "4.00";
-				} else if(o.getAttribute().equals("JPN")) {
+				} else if (o.getAttribute().equals("JPN")) {
 					ecpm[4] = "7.50";
 					ecpm[5] = "4.00";
 				}
@@ -4068,7 +4062,7 @@ public class DataAccess {
 		return countryReqs;
 
 	}
-	
+
 	public List<GenericObject> getReqsByOsVersions() {
 
 		Connection conn = null;
@@ -4076,14 +4070,12 @@ public class DataAccess {
 		ResultSet rs = null;
 
 		String query = "select f.device_os, f.device_osv, sum(f.ads_requested) reqs "
-+"from datawarehouse.fact_traffic_targeted_site f "
-+"where date(f.start) >= date_sub(curdate(), interval 30 day) "
-+"and f.device_os <> '???' "
-+"group by 2 having reqs > 9999 "
-+"order by 3 desc";
-		
+				+ "from datawarehouse.fact_traffic_targeted_site f "
+				+ "where date(f.start) >= date_sub(curdate(), interval 30 day) " + "and f.device_os <> '???' "
+				+ "group by 2 having reqs > 9999 " + "order by 3 desc";
+
 		List<GenericObject> osVerReqs = new ArrayList<GenericObject>();
-		
+
 		try {
 
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -4093,7 +4085,7 @@ public class DataAccess {
 
 			while (rs.next()) {
 				GenericObject o = new GenericObject();
-				o.setAttribute(rs.getString(1)+" "+rs.getString(2));
+				o.setAttribute(rs.getString(1) + " " + rs.getString(2));
 				o.setRequests(rs.getLong(3));
 				osVerReqs.add(o);
 			}

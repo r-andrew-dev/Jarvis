@@ -1,13 +1,17 @@
 package utils;
 
-import data.DataAccess;
+import java.io.IOException;
+
+import data.Register;
+import data.ViewRecords;
 
 public class Test {
 
-	public static void main(String[] args) {
-		DataAccess d = new DataAccess();
-		for(int i = 0 ; i < 12; i++)
-			System.out.println(d.getGreenPubChurnRevenue("119", 2015, i+1));
+	public static void main(String[] args) throws IOException {
+		Register r = new Register();
+		r.insert("kb", "kb@aol.com", "1112223333");
+		ViewRecords v = new ViewRecords();
+		v.read();
 	}
 
 }

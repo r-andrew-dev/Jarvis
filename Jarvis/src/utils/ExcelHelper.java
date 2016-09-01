@@ -56,7 +56,6 @@ public class ExcelHelper {
 		}
 
 		reader.close();
-		
 
 		for (int i = 0; i < exchanges.size(); i++) {
 			Exchange currExchange = exchanges.get(i);
@@ -88,7 +87,7 @@ public class ExcelHelper {
 
 		return exchanges;
 	}
-	
+
 	public List<Bidder> readNativeBidders() throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(path + "Native_Bidders.csv"));
 		List<Bidder> bidders = new ArrayList<Bidder>();
@@ -106,7 +105,7 @@ public class ExcelHelper {
 
 		return bidders;
 	}
-	
+
 	public Map<String, String> readPubAMs() throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(path + "pub_ams.csv"));
 		Map<String, String> ams = new HashMap<String, String>();
@@ -117,7 +116,7 @@ public class ExcelHelper {
 		reader.close();
 		return ams;
 	}
-	
+
 	public List<SDK> readSdkData() throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(path + "sdk.csv"));
 		List<SDK> data = new ArrayList<SDK>();
@@ -138,212 +137,235 @@ public class ExcelHelper {
 		reader.close();
 		return data;
 	}
-	
-	public List<Viewability> readViewabilityData() throws IOException {
-		CSVReader reader = new CSVReader(new FileReader(path + "MOAT_Exchange.csv"));
+
+	public List<Viewability> readViewabilityData(String type) throws IOException {
+
 		List<Viewability> sitesList = new ArrayList<Viewability>();
-		String[] nextLine = reader.readNext();
-		while ((nextLine = reader.readNext()) != null) {
-			Viewability v = new Viewability();
-			v.setNexPubName(nextLine[1]);
-			v.setAcctMgr(nextLine[0]);
-			v.setNexSiteName(nextLine[2]);
-			v.setNexAlias(nextLine[3]);
-			v.setDspSiteId(nextLine[4]);
-			v.setCreativeType(nextLine[5]);
-			v.setCreativeSize(nextLine[6]);
-			v.setOs(nextLine[7]);
-			v.setInvType(nextLine[8]);
-			v.setImpsAnalyzed(Integer.parseInt(nextLine[9]));
-			v.setImpsDelivered(Integer.parseInt(nextLine[10]));
-			v.setImpsDiscrepancy(nextLine[11]);
-			v.setMeasuredRate(nextLine[12]);
-			v.setViewScore(nextLine[13]);
-			v.setDailyAvails(Integer.parseInt(nextLine[14]));
-			v.setDateLastTested(nextLine[15]);
-			v.setPartner("MOAT");
-			v.setPlatform("Exchange");
-			sitesList.add(v);
+		if (type.equals("IASexchange")) {
+
+			CSVReader reader = new CSVReader(new FileReader(path + "IAS_Exchange.csv"));
+			String[] nextLine = reader.readNext();
+
+			while ((nextLine = reader.readNext()) != null) {
+				Viewability v = new Viewability();
+				v.setNexPubName(nextLine[1]);
+				v.setAcctMgr(nextLine[0]);
+				v.setNexSiteName(nextLine[2]);
+				v.setNexAlias(nextLine[4]);
+				v.setDspSiteId(nextLine[3]);
+				v.setCreativeType(nextLine[5]);
+				v.setCreativeSize(nextLine[6]);
+				v.setOs(nextLine[7]);
+				v.setInvType(nextLine[8]);
+				v.setImpsAnalyzed(Integer.parseInt(nextLine[9]));
+				v.setImpsDelivered(Integer.parseInt(nextLine[10]));
+				v.setImpsDiscrepancy(nextLine[11]);
+				v.setMeasuredRate(nextLine[12]);
+				v.setViewScore(nextLine[13]);
+				v.setDailyAvails(Integer.parseInt(nextLine[14]));
+				v.setDateLastTested(nextLine[15]);
+				v.setPartner("IAS");
+				v.setPlatform("Exchange");
+				sitesList.add(v);
+			}
+			reader.close();
+		} else if (type.equals("MOATexchange")) {
+			CSVReader reader = new CSVReader(new FileReader(path + "MOAT_Exchange.csv"));
+			String[] nextLine = reader.readNext();
+			while ((nextLine = reader.readNext()) != null) {
+				Viewability v = new Viewability();
+				v.setNexPubName(nextLine[1]);
+				v.setAcctMgr(nextLine[0]);
+				v.setNexSiteName(nextLine[2]);
+				v.setNexAlias(nextLine[3]);
+				v.setDspSiteId(nextLine[4]);
+				v.setCreativeType(nextLine[5]);
+				v.setCreativeSize(nextLine[6]);
+				v.setOs(nextLine[7]);
+				v.setInvType(nextLine[8]);
+				v.setImpsAnalyzed(Integer.parseInt(nextLine[9]));
+				v.setImpsDelivered(Integer.parseInt(nextLine[10]));
+				v.setImpsDiscrepancy(nextLine[11]);
+				v.setMeasuredRate(nextLine[12]);
+				v.setViewScore(nextLine[13]);
+				v.setDailyAvails(Integer.parseInt(nextLine[14]));
+				v.setDateLastTested(nextLine[15]);
+				v.setPartner("MOAT");
+				v.setPlatform("Exchange");
+				sitesList.add(v);
+			}
+			reader.close();
+		} else if (type.equals("MOATnetwork")) {
+
+			CSVReader reader = new CSVReader(new FileReader(path + "MOAT_Network.csv"));
+			String[] nextLine = reader.readNext();
+			while ((nextLine = reader.readNext()) != null) {
+				Viewability v = new Viewability();
+				v.setNexPubName(nextLine[1]);
+				v.setAcctMgr(nextLine[0]);
+				v.setPubId(nextLine[2]);
+				v.setNexSiteName(nextLine[3]);
+				v.setDspSiteId(nextLine[4]);
+				v.setPlacementName(nextLine[5]);
+				v.setApid(nextLine[6]);
+				v.setCreativeType(nextLine[7]);
+				v.setCreativeSize(nextLine[8]);
+				v.setOs(nextLine[9]);
+				v.setInvType(nextLine[10]);
+				v.setImpsAnalyzed(Integer.parseInt(nextLine[11]));
+				v.setImpsDelivered(Integer.parseInt(nextLine[12]));
+				v.setImpsDiscrepancy(nextLine[13]);
+				v.setMeasuredRate(nextLine[14]);
+				v.setViewScore(nextLine[15]);
+				v.setDailyAvails(Integer.parseInt(nextLine[16]));
+				v.setDateLastTested(nextLine[17]);
+				v.setPartner("MOAT");
+				v.setPlatform("Network");
+				sitesList.add(v);
+			}
+			reader.close();
+
+		} else if (type.equals("IASnetwork")) {
+
 		}
-		reader.close();
-		
-		reader = new CSVReader(new FileReader(path + "IAS_Exchange.csv"));
-		nextLine = reader.readNext();
-		while ((nextLine = reader.readNext()) != null) {
-			Viewability v = new Viewability();
-			v.setNexPubName(nextLine[1]);
-			v.setAcctMgr(nextLine[0]);
-			v.setNexSiteName(nextLine[2]);
-			v.setNexAlias(nextLine[4]);
-			v.setDspSiteId(nextLine[3]);
-			v.setCreativeType(nextLine[5]);
-			v.setCreativeSize(nextLine[6]);
-			v.setOs(nextLine[7]);
-			v.setInvType(nextLine[8]);
-			v.setImpsAnalyzed(Integer.parseInt(nextLine[9]));
-			v.setImpsDelivered(Integer.parseInt(nextLine[10]));
-			v.setImpsDiscrepancy(nextLine[11]);
-			v.setMeasuredRate(nextLine[12]);
-			v.setViewScore(nextLine[13]);
-			v.setDailyAvails(Integer.parseInt(nextLine[14]));
-			v.setDateLastTested(nextLine[15]);
-			v.setPartner("IAS");
-			v.setPlatform("Exchange");
-			sitesList.add(v);
-		}
-		reader.close();
-		
-		reader = new CSVReader(new FileReader(path + "MOAT_Network.csv"));
-		nextLine = reader.readNext();
-		while ((nextLine = reader.readNext()) != null) {
-			Viewability v = new Viewability();
-			v.setNexPubName(nextLine[1]);
-			v.setAcctMgr(nextLine[0]);
-			v.setPubId(nextLine[2]);
-			v.setNexSiteName(nextLine[3]);
-			v.setDspSiteId(nextLine[4]);
-			v.setPlacementName(nextLine[5]);
-			v.setApid(nextLine[6]);
-			v.setCreativeType(nextLine[7]);
-			v.setCreativeSize(nextLine[8]);
-			v.setOs(nextLine[9]);
-			v.setInvType(nextLine[10]);
-			v.setImpsAnalyzed(Integer.parseInt(nextLine[11]));
-			v.setImpsDelivered(Integer.parseInt(nextLine[12]));
-			v.setImpsDiscrepancy(nextLine[13]);
-			v.setMeasuredRate(nextLine[14]);
-			v.setViewScore(nextLine[15]);
-			v.setDailyAvails(Integer.parseInt(nextLine[16]));
-			v.setDateLastTested(nextLine[16]);
-			v.setPartner("MOAT");
-			v.setPlatform("Network");
-			sitesList.add(v);
-		}
-		reader.close();
-		
-		
+
 		return sitesList;
 	}
-	
-	
-	public List<Viewability> readNewViewabilityData() throws IOException, ParseException {
-		CSVReader reader = new CSVReader(new FileReader(path + "IAS_Exchange_New.csv"));
-		List<Viewability> sitesList = new ArrayList<Viewability>();
-		String[] nextLine = reader.readNext();
-		
-		DataAccess d = new DataAccess();
-		Map<String, String[]> nexSites = d.getNexSites();
-		Map<String, String[]> nexSitesData = d.getNexSitesData();
-		Map<String, String> nexAvails = d.getNexDailyAvails();
-		Map<String, Map<String, String>> siteValues = d.getNexDelivered();
-		
-		while ((nextLine = reader.readNext()) != null) {
-			Viewability v = new Viewability();
-			//v.setAcctMgr(nextLine[0]);
-			v.setDspSiteId(nextLine[3]);
-			v.setNexAlias(nexSites.get(v.getDspSiteId())[0]);
-			v.setCreativeSize(nexSites.get(v.getDspSiteId())[1]);
-			if(v.getCreativeSize().equals("320x480") || v.getCreativeSize().equals("480x320"))
-				v.setCreativeType("FSI");
-			else
-				v.setCreativeType("Standard Banner");
-			String nexSiteId = v.getNexAlias().substring(4, v.getNexAlias().length());
-			if(nexSitesData.keySet().contains(nexSiteId)) {
-				v.setNexPubName(nexSitesData.get(nexSiteId)[0]);
-				v.setNexSiteName(nexSitesData.get(nexSiteId)[1]);
-				v.setOs(nexSitesData.get(nexSiteId)[2]);
-			} else {
-				v.setNexPubName("N/A");
-				v.setNexSiteName("N/A");
-				v.setOs("N/A");
-			}
-			if(nexAvails.keySet().contains(nexSiteId))
-				v.setDailyAvails(Integer.parseInt(nexAvails.get(nexSiteId)));
 
-			v.setInvType("");
-			v.setImpsAnalyzed(Integer.parseInt(nextLine[17]));
-			v.setMeasuredRate(nextLine[11]);
-			v.setViewScore(nextLine[12]);
-			v.setDateLastTested(nextLine[0]);
-			
-			SimpleDateFormat formatter = new SimpleDateFormat("mm/dd/yyyy");
-			Date date = formatter.parse(v.getDateLastTested());
-			SimpleDateFormat newFormatter = new SimpleDateFormat("yyyy-mm-dd");
-			String formatttedDate = newFormatter.format(date);
-			
-			if(siteValues.containsKey(nexSiteId)) {
-				if(siteValues.get(nexSiteId).containsKey(formatttedDate)) {
-					v.setImpsDelivered(Integer.parseInt(siteValues.get(nexSiteId).get(formatttedDate)));
+	public List<Viewability> readNewViewabilityData(String type) throws IOException, ParseException {
+		List<Viewability> sitesList = new ArrayList<Viewability>();
+		if (type.equals("IASexchange")) {
+			CSVReader reader = new CSVReader(new FileReader(path + "IAS_Exchange_New.csv"));
+
+			String[] nextLine = reader.readNext();
+
+			DataAccess d = new DataAccess();
+			Map<String, String[]> nexSites = d.getNexSites();
+			Map<String, String[]> nexSitesData = d.getNexSitesData();
+			Map<String, String> nexAvails = d.getNexDailyAvails();
+			Map<String, Map<String, String>> siteValues = d.getNexDelivered();
+
+			while ((nextLine = reader.readNext()) != null) {
+				Viewability v = new Viewability();
+				// v.setAcctMgr(nextLine[0]);
+				v.setDspSiteId(nextLine[3]);
+				v.setNexAlias(nexSites.get(v.getDspSiteId())[0]);
+				v.setCreativeSize(nexSites.get(v.getDspSiteId())[1]);
+				if (v.getCreativeSize().equals("320x480") || v.getCreativeSize().equals("480x320"))
+					v.setCreativeType("FSI");
+				else
+					v.setCreativeType("Standard Banner");
+				String nexSiteId = v.getNexAlias().substring(4, v.getNexAlias().length());
+				if (nexSitesData.keySet().contains(nexSiteId)) {
+					v.setNexPubName(nexSitesData.get(nexSiteId)[0]);
+					v.setNexSiteName(nexSitesData.get(nexSiteId)[1]);
+					v.setOs(nexSitesData.get(nexSiteId)[2]);
+				} else {
+					v.setNexPubName("N/A");
+					v.setNexSiteName("N/A");
+					v.setOs("N/A");
 				}
-			} else {
-				v.setImpsDelivered(0);
+				if (nexAvails.keySet().contains(nexSiteId))
+					v.setDailyAvails(Integer.parseInt(nexAvails.get(nexSiteId)));
+
+				v.setInvType("");
+				v.setImpsAnalyzed(Integer.parseInt(nextLine[17]));
+				v.setMeasuredRate(nextLine[11]);
+				v.setViewScore(nextLine[12]);
+				v.setDateLastTested(nextLine[0]);
+
+				SimpleDateFormat formatter = new SimpleDateFormat("mm/dd/yyyy");
+				Date date = formatter.parse(v.getDateLastTested());
+				SimpleDateFormat newFormatter = new SimpleDateFormat("yyyy-mm-dd");
+				String formatttedDate = newFormatter.format(date);
+
+				if (siteValues.containsKey(nexSiteId)) {
+					if (siteValues.get(nexSiteId).containsKey(formatttedDate)) {
+						v.setImpsDelivered(Integer.parseInt(siteValues.get(nexSiteId).get(formatttedDate)));
+					}
+				} else {
+					v.setImpsDelivered(0);
+				}
+
+				if (v.getImpsDelivered() > 0)
+					v.setImpsDiscrepancy("" + v.getImpsAnalyzed() / v.getImpsDelivered() * 100 + "%");
+				else
+					v.setImpsDiscrepancy("0%");
+				v.setPartner("IAS");
+				v.setPlatform("Exchange");
+				sitesList.add(v);
 			}
+			reader.close();
+		} else if (type.equals("IASnetwork")) {
+
+			Map<String, Viewability> sitesMap = new HashMap<String, Viewability>();
+			DataAccess d = new DataAccess();
+			Map<String, String[]> mydasSites = d.getMydasSites();
+			CSVReader reader = new CSVReader(new FileReader(path + "IAS_Network_New.csv"));
+			String[] nextLine = reader.readNext();
+			while ((nextLine = reader.readNext()) != null) {
+
+				if (!sitesMap.containsKey(nextLine[3])) {
+					Viewability v = new Viewability();
+					v.setApid(nextLine[3]);
+					v.setCreativeType(mydasSites.get(v.getApid())[3]);
+					v.setNexPubName(mydasSites.get(v.getApid())[2]);
+					v.setNexSiteName(mydasSites.get(v.getApid())[1]);
+					v.setPlacementName(mydasSites.get(v.getApid())[0]);
+					v.setOs(mydasSites.get(v.getApid())[4]);
+					v.setInvType("");
+					v.setImpsAnalyzed(Integer.parseInt(nextLine[16]));
+					v.setImpsDelivered(0);
+					v.setViewScore(nextLine[25]);
+					v.setDateLastTested(nextLine[0]);
+					v.setMeasuredRate(nextLine[30]);
+					v.setPartner("IAS");
+					v.setPlatform("Network");
+					sitesMap.put(v.getApid(), v);
+				} else {
+					Viewability v = sitesMap.get(nextLine[3]);
+					v.setImpsAnalyzed(v.getImpsAnalyzed()+Integer.parseInt(nextLine[16]));
+					sitesMap.put(v.getApid(), v);
+				}
+				
+			}
+			reader.close();
+			sitesList.addAll(sitesMap.values());
+
+		} else if (type.equals("MOATnetwork")) {/*
+
+			CSVReader reader = new CSVReader(new FileReader(path + "MOAT_Network.csv"));
+			String[] nextLine = reader.readNext();
+			while ((nextLine = reader.readNext()) != null) {
+				Viewability v = new Viewability();
+				v.setNexPubName(nextLine[1]);
+				v.setAcctMgr(nextLine[0]);
+				v.setPubId(nextLine[2]);
+				v.setNexSiteName(nextLine[3]);
+				v.setDspSiteId(nextLine[4]);
+				v.setPlacementName(nextLine[5]);
+				v.setApid(nextLine[6]);
+				v.setCreativeType(nextLine[7]);
+				v.setCreativeSize(nextLine[8]);
+				v.setOs(nextLine[9]);
+				v.setInvType(nextLine[10]);
+				v.setImpsAnalyzed(Integer.parseInt(nextLine[11]));
+				v.setImpsDelivered(Integer.parseInt(nextLine[12]));
+				v.setImpsDiscrepancy(nextLine[13]);
+				v.setMeasuredRate(nextLine[14]);
+				v.setViewScore(nextLine[15]);
+				v.setDailyAvails(Integer.parseInt(nextLine[16]));
+				v.setDateLastTested(nextLine[16]);
+				v.setPartner("MOAT");
+				v.setPlatform("Network");
+				sitesList.add(v);
+			}
+			reader.close();
+
+		*/} else if (type.equals("MOATexchange")) {
 			
-			if(v.getImpsDelivered() > 0)
-				v.setImpsDiscrepancy(""+v.getImpsAnalyzed()/v.getImpsDelivered()*100+"%");
-			else
-				v.setImpsDiscrepancy("0%");
-			v.setPartner("IAS");
-			v.setPlatform("Exchange");
-			sitesList.add(v);
 		}
-		reader.close();
-		
-		/*reader = new CSVReader(new FileReader(path + "IAS_Exchange.csv"));
-		nextLine = reader.readNext();
-		while ((nextLine = reader.readNext()) != null) {
-			Viewability v = new Viewability();
-			v.setNexPubName(nextLine[1]);
-			v.setAcctMgr(nextLine[0]);
-			v.setNexSiteName(nextLine[2]);
-			v.setNexAlias(nextLine[3]);
-			v.setDspSiteId(nextLine[4]);
-			v.setCreativeType(nextLine[5]);
-			v.setCreativeSize(nextLine[6]);
-			v.setOs(nextLine[7]);
-			v.setInvType(nextLine[8]);
-			v.setImpsAnalyzed(Integer.parseInt(nextLine[9]));
-			v.setImpsDelivered(Integer.parseInt(nextLine[10]));
-			v.setImpsDiscrepancy(nextLine[11]);
-			v.setMeasuredRate(nextLine[12]);
-			v.setViewScore(nextLine[13]);
-			v.setDailyAvails(Integer.parseInt(nextLine[14]));
-			v.setDateLastTested(nextLine[15]);
-			v.setPartner("IAS");
-			v.setPlatform("Exchange");
-			sitesList.add(v);
-		}
-		reader.close();
-		
-		reader = new CSVReader(new FileReader(path + "MOAT_Network.csv"));
-		nextLine = reader.readNext();
-		while ((nextLine = reader.readNext()) != null) {
-			Viewability v = new Viewability();
-			v.setNexPubName(nextLine[1]);
-			v.setAcctMgr(nextLine[0]);
-			v.setPubId(nextLine[2]);
-			v.setNexSiteName(nextLine[3]);
-			v.setDspSiteId(nextLine[4]);
-			v.setPlacementName(nextLine[5]);
-			v.setApid(nextLine[6]);
-			v.setCreativeType(nextLine[7]);
-			v.setCreativeSize(nextLine[8]);
-			v.setOs(nextLine[9]);
-			v.setInvType(nextLine[10]);
-			v.setImpsAnalyzed(Integer.parseInt(nextLine[11]));
-			v.setImpsDelivered(Integer.parseInt(nextLine[12]));
-			v.setImpsDiscrepancy(nextLine[13]);
-			v.setMeasuredRate(nextLine[14]);
-			v.setViewScore(nextLine[15]);
-			v.setDailyAvails(Integer.parseInt(nextLine[16]));
-			v.setDateLastTested(nextLine[16]);
-			v.setPartner("MOAT");
-			v.setPlatform("Network");
-			sitesList.add(v);
-		}
-		reader.close();*/
-		
-		
+
 		return sitesList;
 	}
 
@@ -798,7 +820,7 @@ public class ExcelHelper {
 		}
 
 		Collections.sort(pubChurnList, PubChurn.COMPARE_BY_FIRST_MONTH);
-		
+
 		PubChurn pc = new PubChurn();
 
 		for (Iterator<PubChurn> i = pubChurnList.iterator(); i.hasNext();) {
@@ -822,9 +844,9 @@ public class ExcelHelper {
 				+ 0.28 * pc.getY2m6revenue() + 0.24 * pc.getY2m7revenue() + 0.2 * pc.getY2m8revenue()
 				+ 0.16 * pc.getY2m9revenue() + 0.12 * pc.getY2m10revenue() + 0.08 * pc.getY2m11revenue()
 				+ 0.04 * pc.getY2m12revenue();
-		
+
 		PubChurn risk = new PubChurn();
-		risk.setRisk(weightedRev/totalRev*100);
+		risk.setRisk(weightedRev / totalRev * 100);
 
 		pubChurnList.add(risk);
 
@@ -971,9 +993,9 @@ public class ExcelHelper {
 				+ 0.28 * pc.getY2m6revenue() + 0.24 * pc.getY2m7revenue() + 0.2 * pc.getY2m8revenue()
 				+ 0.16 * pc.getY2m9revenue() + 0.12 * pc.getY2m10revenue() + 0.08 * pc.getY2m11revenue()
 				+ 0.04 * pc.getY2m12revenue();
-		
+
 		PubChurn risk = new PubChurn();
-		risk.setRisk(weightedRev/totalRev*100);
+		risk.setRisk(weightedRev / totalRev * 100);
 
 		pubChurnList.add(risk);
 

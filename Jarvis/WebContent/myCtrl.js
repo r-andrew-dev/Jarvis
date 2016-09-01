@@ -2498,7 +2498,7 @@ tierOptApp.controller('tierOptCtrl', function($scope, $http) {
 
 viewabilityApp
 		.controller(
-				'viewabilityCtrl',
+				'iasExchCtrl',
 				function($scope, $http, $location) {
 
 					$scope.showData = false;
@@ -2512,7 +2512,7 @@ viewabilityApp
 
 					$http({
 						method : "GET",
-						url : "viewabilityController?path=" + path
+						url : "viewabilityController?type=iase&path=" + path
 					}).then(function mySuccess(response) {
 						$scope.data = response.data;
 						$scope.showData = true;
@@ -2521,35 +2521,14 @@ viewabilityApp
 					});
 
 					$scope.exportData = function(type) {
-						if (type == 'IASexch') {
-							var blob = new Blob(
-									[ document.getElementById('exportable1').innerHTML ],
-									{
-										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-									});
-							saveAs(blob, "IAS_Exchange.xls");
-						} else if (type == 'MOATexch') {
-							var blob = new Blob(
-									[ document.getElementById('exportable2').innerHTML ],
-									{
-										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-									});
-							saveAs(blob, "MOAT_Exchange.xls");
-						} else if (type == 'IASNet') {
-							var blob = new Blob(
-									[ document.getElementById('exportable3').innerHTML ],
-									{
-										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-									});
-							saveAs(blob, "IAS_Network.xls");
-						} else if (type == 'MOATnet') {
-							var blob = new Blob(
-									[ document.getElementById('exportable4').innerHTML ],
-									{
-										type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
-									});
-							saveAs(blob, "MOAT_Network.xls");
-						}
+
+						var blob = new Blob(
+								[ document.getElementById('exportable1').innerHTML ],
+								{
+									type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+								});
+						saveAs(blob, "IAS_Exchange.xls");
+
 					};
 
 					$scope.order = function(predicate) {
@@ -2558,6 +2537,133 @@ viewabilityApp
 						$scope.predicate = predicate;
 					};
 				});
+
+viewabilityApp
+		.controller(
+				'moatExchCtrl',
+				function($scope, $http, $location) {
+
+					$scope.showData = false;
+
+					if ($location.absUrl().indexOf('localhost') > -1)
+						path = 'local';
+					else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+						path = 'mac';
+					else
+						path = 'remote';
+
+					$http({
+						method : "GET",
+						url : "viewabilityController?type=moate&path=" + path
+					}).then(function mySuccess(response) {
+						$scope.data = response.data;
+						$scope.showData = true;
+					}, function myError(response) {
+						$scope.sites = response.statusText;
+					});
+
+					$scope.exportData = function(type) {
+
+						var blob = new Blob(
+								[ document.getElementById('exportable2').innerHTML ],
+								{
+									type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+								});
+						saveAs(blob, "MOAT_Exchange.xls");
+
+					};
+
+					$scope.order = function(predicate) {
+						$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
+								: false;
+						$scope.predicate = predicate;
+					};
+				});
+
+viewabilityApp
+.controller(
+		'iasNetCtrl',
+		function($scope, $http, $location) {
+
+			$scope.showData = false;
+
+			if ($location.absUrl().indexOf('localhost') > -1)
+				path = 'local';
+			else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+				path = 'mac';
+			else
+				path = 'remote';
+
+			$http({
+				method : "GET",
+				url : "viewabilityController?type=iasn&path=" + path
+			}).then(function mySuccess(response) {
+				$scope.data = response.data;
+				$scope.showData = true;
+			}, function myError(response) {
+				$scope.sites = response.statusText;
+			});
+
+			$scope.exportData = function(type) {
+
+				var blob = new Blob(
+						[ document.getElementById('exportable3').innerHTML ],
+						{
+							type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+						});
+				saveAs(blob, "IAS_Network.xls");
+
+			};
+
+			$scope.order = function(predicate) {
+				$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
+						: false;
+				$scope.predicate = predicate;
+			};
+		});
+
+viewabilityApp
+.controller(
+		'moatNetCtrl',
+		function($scope, $http, $location) {
+
+			$scope.showData = false;
+
+			if ($location.absUrl().indexOf('localhost') > -1)
+				path = 'local';
+			else if ($location.absUrl().indexOf('10.172.98.67') > -1)
+				path = 'mac';
+			else
+				path = 'remote';
+
+			$http({
+				method : "GET",
+				url : "viewabilityController?type=moatn&path=" + path
+			}).then(function mySuccess(response) {
+				$scope.data = response.data;
+				$scope.showData = true;
+			}, function myError(response) {
+				$scope.sites = response.statusText;
+			});
+
+			$scope.exportData = function(type) {
+
+				var blob = new Blob(
+						[ document.getElementById('exportable4').innerHTML ],
+						{
+							type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+						});
+				saveAs(blob, "MOAT_Network.xls");
+
+			};
+
+			$scope.order = function(predicate) {
+				$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse
+						: false;
+				$scope.predicate = predicate;
+			};
+		});
+
 
 viewabilityApp.filter('percentage', [ '$filter', function($filter) {
 	return function(input, decimals) {
@@ -2571,23 +2677,23 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 	$scope.showAreaData = false;
 	var categories = [];
 	var trendsData = [];
-	
+
 	$scope.typeValue = 'col';
 	$scope.showCol = true;
 	$scope.showArea = false;
-	
+
 	var chartType = $scope.typeValue;
-	
+
 	$scope.changeChart = function() {
 		chartType = $scope.typeValue;
-		if(chartType == 'col') {
+		if (chartType == 'col') {
 			$scope.showCol = true;
 			$scope.showArea = false;
 		} else {
 			$scope.showCol = false;
 			$scope.showArea = true;
 		}
-		
+
 	};
 
 	if ($location.absUrl().indexOf('localhost') > -1)
@@ -2661,9 +2767,9 @@ sdkApp.controller('sdkCtrl', function($scope, $http, $location) {
 				trendsData.push(win_s2sDataObject);
 				trendsData.push(unknownDataObject);
 				$scope.sdkChart = drawStackedColumnChartWide(categories,
-							trendsData, 'Adoption Rate', 'SDK Adoption');
-				$scope.sdkAreaChart = drawAreaChartWide(categories,
 						trendsData, 'Adoption Rate', 'SDK Adoption');
+				$scope.sdkAreaChart = drawAreaChartWide(categories, trendsData,
+						'Adoption Rate', 'SDK Adoption');
 				$scope.showData = true;
 
 			}, function myError(response) {
