@@ -1,3 +1,5 @@
+// Take Down request
+
 package model;
 
 public class Daily {
